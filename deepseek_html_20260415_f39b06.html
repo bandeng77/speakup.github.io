@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakUp - Laporkan, Suarakan, Perbaiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fc 0%, #eef2f6 100%);
+            color: #1e293b;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .hero { text-align: center; margin-bottom: 2rem; }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero .tagline {
+            font-size: 1rem;
+            color: #2c3e66;
+            background: rgba(255,255,240,0.7);
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            margin-top: 0.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            padding: 1.8rem 2rem;
+        }
+        .greeting {
+            background: #eef2ff;
+            border-radius: 60px;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn-primary {
+            background: linear-gradient(100deg, #2563eb, #1d4ed8);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #cbd5e1;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .step-section {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.8rem;
+        }
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .step-badge {
+            background: #3b82f6;
+            color: white;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+        .category-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin: 1rem 0;
+        }
+        .cat-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover {
+            background: #e2e8f0;
+        }
+        .cat-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+        .info-icon {
+            color: #6c86a3;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            background: #eef2ff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        .row-2col { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .row-2col > div { flex: 1; }
+        .file-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            padding: 1.2rem;
+            text-align: center;
+            background: #fafcff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-zone:hover { background: #f1f5fe; border-color: #3b82f6; }
+        .preview-files { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .file-badge {
+            background: #eef2ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .remove-file {
+            cursor: pointer;
+            color: #ef4444;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .remove-file:hover {
+            color: #dc2626;
+        }
+        .confirm-box {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            border-left: 5px solid #3b82f6;
+        }
+        .action-buttons { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+        .hidden { display: none; }
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .upload-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        @media (max-width: 680px) { 
+            .card { padding: 1.2rem; }
+            .greeting { flex-direction: column; text-align: center; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons button { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1><i class="fas fa-bullhorn"></i> SpeakUp</h1>
+        <div class="tagline">Laporkan, Suarakan, Perbaiki</div>
+        <p style="margin-top: 0.8rem; font-size: 0.85rem;">Semua laporan bersifat rahasia & anonim</p>
+    </div>
+
+    <div class="card">
+        <div class="greeting">
+            <p><i class="fas fa-comment-dots"></i> Ada kendala atau masukan di pekerjaanmu?</p>
+            <button id="newReportBtn" class="btn-primary"><i class="fas fa-plus-circle"></i> Buat Laporan Baru</button>
+        </div>
+
+        <div id="formContainer" class="hidden">
+            <form id="reportForm">
+                <div class="step-section">
+                    <div class="step-title">
+                        <span class="step-badge">1</span> Kategori Masalah 
+                        <span id="infoCatIcon" class="info-icon"><i class="fas fa-info-circle"></i></span>
+                    </div>
+                    <div id="categoryGroup" class="category-grid"></div>
+                    <div id="customCategoryDiv" class="hidden" style="margin-top: 12px;">
+                        <input type="text" id="customCategoryInput" placeholder="Masukkan kategori lain...">
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">2</span> Judul Masalah</div>
+                    <input type="text" id="judul" placeholder="Contoh: Koordinasi dengan atasan kurang responsif" maxlength="120">
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">3</span> Kronologi</div>
+                    <textarea id="kronologi" rows="4" placeholder="Jelaskan kejadian secara singkat dan jelas (apa, kapan, dimana, dampaknya)..."></textarea>
+                    <div style="font-size: 0.7rem; color:#6b7280; margin-top: 5px;">Contoh: Beberapa kali tim mengalami kesulitan koordinasi karena respon atasan lambat</div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">4</span> Pihak Terkait</div>
+                    <div class="row-2col">
+                        <div><input type="text" id="pihakNama" placeholder="Nama (opsional)"></div>
+                        <div><input type="text" id="pihakJabatan" placeholder="Jabatan (opsional)"></div>
+                        <div><input type="text" id="pihakDivisi" placeholder="Divisi (opsional)"></div>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">5</span> Detail Tambahan</div>
+                    <div class="row-2col">
+                        <div><input type="date" id="tanggalKejadian"></div>
+                        <div><input type="text" id="lokasiProject" placeholder="Lokasi / Project"></div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <label style="font-weight: 500;">Status:</label>
+                        <select id="statusKejadian">
+                            <option value="Masih terjadi">Masih terjadi</option>
+                            <option value="Sudah selesai">Sudah selesai</option>
+                            <option value="Terjadi Berulang">Terjadi Berulang</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">6</span> Upload Bukti</div>
+                    <div id="dropzone" class="file-zone">
+                        <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                        <p>Klik atau drag & drop file (Foto, Video, Screenshot, PDF)</p>
+                        <p style="font-size: 0.75rem; margin-top: 5px;">Maksimal 5MB per file</p>
+                        <input type="file" id="fileInput" multiple accept="image/*,video/*,application/pdf,.txt,.doc,.docx" style="display: none;">
+                    </div>
+                    <div id="filePreviewList" class="preview-files"></div>
+                    <div id="uploadProgress" class="upload-progress hidden">
+                        <div id="uploadProgressBar" class="upload-progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">7</span> Konfirmasi Laporan</div>
+                    <div class="confirm-box">
+                        <i class="fas fa-shield-alt" style="margin-right: 8px; color:#2563eb;"></i> Apakah Anda yakin ingin mengirim laporan ini?<br>
+                        Pastikan informasi yang disampaikan sudah benar dan sesuai kejadian.<br>
+                        <strong>Laporan akan diproses secara rahasia & anonim.</strong>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="button" id="backCheckBtn" class="btn-outline"><i class="fas fa-arrow-left"></i> Kembali Periksa</button>
+                        <button type="submit" id="submitReportBtn" class="btn-primary"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div id="emptyState" style="text-align: center; padding: 3rem 1rem;">
+            <i class="fas fa-file-alt" style="font-size: 3rem; color:#94a3b8;"></i>
+            <p style="margin-top: 1rem;">Klik "Buat Laporan Baru" untuk menyampaikan keluhan atau masukan secara anonim.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================== KONFIGURASI ========================
+    const EMAILJS_PUBLIC_KEY = "STBRxktGl6mM6Zi95";
+    const EMAILJS_SERVICE_ID = "carbonio_mail";
+    const EMAILJS_TEMPLATE_ID = "template_08n414a";
+    const RECIPIENT_EMAIL = "galihtest@genetek.co.id";
+    
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    console.log("✅ EmailJS initialized");
+    
+    // State
+    let selectedCategory = "";
+    let uploadedFiles = []; // Store { name, dataURL, size }
+    
+    // DOM Elements
+    const newReportBtn = document.getElementById('newReportBtn');
+    const formContainer = document.getElementById('formContainer');
+    const emptyStateDiv = document.getElementById('emptyState');
+    const categoryGroup = document.getElementById('categoryGroup');
+    const customCategoryDiv = document.getElementById('customCategoryDiv');
+    const customCategoryInput = document.getElementById('customCategoryInput');
+    const fileInput = document.getElementById('fileInput');
+    const dropzone = document.getElementById('dropzone');
+    const filePreviewList = document.getElementById('filePreviewList');
+    const reportForm = document.getElementById('reportForm');
+    const backCheckBtn = document.getElementById('backCheckBtn');
+    const uploadProgressDiv = document.getElementById('uploadProgress');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    
+    const kategoriList = [
+        "HR & Hubungan Kerja", "Kompensasi & Benefit", "Operasional & Proses Kerja", "K3 / Safety",
+        "Administrasi & Dokumen", "Fasilitas & Infrastruktur", "Etika & Perilaku", "Manajemen & Kebijakan",
+        "Pelanggaran / Fraud", "Lainnya"
+    ];
+    
+    function renderCategories() {
+        if (!categoryGroup) return;
+        categoryGroup.innerHTML = "";
+        kategoriList.forEach(kat => {
+            const btn = document.createElement('button');
+            btn.type = "button";
+            btn.className = "cat-btn";
+            btn.innerText = kat;
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCategory = kat;
+                if (kat === "Lainnya" && customCategoryDiv) {
+                    customCategoryDiv.classList.remove('hidden');
+                } else if (customCategoryDiv) {
+                    customCategoryDiv.classList.add('hidden');
+                }
+            });
+            categoryGroup.appendChild(btn);
+        });
+    }
+    
+    const infoCatIcon = document.getElementById('infoCatIcon');
+    if (infoCatIcon) {
+        infoCatIcon.addEventListener('click', () => {
+            alert("Contoh Kategori:\n• HR & Hubungan Kerja: konflik, perlakuan tidak adil\n• Kompensasi & Benefit: gaji, reimburse, bonus\n• K3 / Safety: kondisi berbahaya, alat safety tidak ada\n• Operasional: SOP tidak jelas, pekerjaan terhambat\n• Dan lain-lain");
+        });
+    }
+    
+    // Convert file to base64
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve({ name: file.name, dataURL: reader.result, size: file.size });
+            reader.onerror = error => reject(error);
+        });
+    }
+    
+    async function handleFiles(files) {
+        if (!files || files.length === 0) return;
+        
+        if (uploadProgressDiv) uploadProgressDiv.classList.remove('hidden');
+        let completed = 0;
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast(`File ${file.name} melebihi 5MB, tidak akan disertakan`, true);
+                continue;
+            }
+            
+            try {
+                if (uploadProgressBar) {
+                    const progress = (i / files.length) * 100;
+                    uploadProgressBar.style.width = `${progress}%`;
+                }
+                
+                const fileData = await fileToBase64(file);
+                uploadedFiles.push(fileData);
+                completed++;
+                showToast(`✓ ${file.name} berhasil ditambahkan`, false);
+                
+            } catch(e) {
+                console.error("Gagal baca file:", e);
+                showToast(`✗ Gagal memproses ${file.name}`, true);
+            }
+        }
+        
+        if (uploadProgressBar) uploadProgressBar.style.width = '100%';
+        setTimeout(() => {
+            if (uploadProgressDiv) uploadProgressDiv.classList.add('hidden');
+            if (uploadProgressBar) uploadProgressBar.style.width = '0%';
+        }, 1000);
+        
+        updateFilePreview();
+        
+        if (completed > 0) {
+            showToast(`${completed} file berhasil ditambahkan`, false);
+        }
+    }
+    
+    function updateFilePreview() {
+        if (!filePreviewList) return;
+        filePreviewList.innerHTML = "";
+        uploadedFiles.forEach((item, idx) => {
+            const badge = document.createElement('div');
+            badge.className = 'file-badge';
+            const sizeKB = (item.size / 1024).toFixed(1);
+            badge.innerHTML = `<i class="fas fa-paperclip"></i> ${item.name} (${sizeKB}KB) <span class="remove-file" data-idx="${idx}">✖</span>`;
+            
+            const removeSpan = badge.querySelector('.remove-file');
+            if (removeSpan) {
+                removeSpan.addEventListener('click', () => {
+                    uploadedFiles.splice(idx, 1);
+                    updateFilePreview();
+                });
+            }
+            
+            filePreviewList.appendChild(badge);
+        });
+    }
+    
+    // File input handlers
+    if (dropzone) {
+        dropzone.addEventListener('click', () => fileInput && fileInput.click());
+        dropzone.addEventListener('dragover', (e) => { 
+            e.preventDefault(); 
+            dropzone.style.background = "#eef2ff"; 
+        });
+        dropzone.addEventListener('dragleave', () => dropzone.style.background = "#fafcff");
+        dropzone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropzone.style.background = "#fafcff";
+            await handleFiles(e.dataTransfer.files);
+        });
+    }
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+            await handleFiles(e.target.files);
+            fileInput.value = '';
+        });
+    }
+    
+    async function sendEmailReport(reportData) {
+        let fileInfo = "Tidak ada lampiran";
+        if (uploadedFiles.length > 0) {
+            fileInfo = uploadedFiles.map(f => `${f.name} (${(f.size/1024).toFixed(1)}KB)`).join("\n• ");
+        }
+        
+        const templateParams = {
+            to_email: RECIPIENT_EMAIL,
+            from_email: "noreply@speakup.genetek.co.id",
+            kategori: reportData.kategori,
+            judul: reportData.judul,
+            kronologi: reportData.kronologi,
+            pihak_nama: reportData.pihakTerkait.nama,
+            pihak_jabatan: reportData.pihakTerkait.jabatan,
+            pihak_divisi: reportData.pihakTerkait.divisi,
+            tanggal_kejadian: reportData.detailTambahan.tanggalKejadian || "Tidak disebutkan",
+            lokasi: reportData.detailTambahan.lokasiProject || "Tidak disebutkan",
+            status: reportData.detailTambahan.status,
+            lampiran: fileInfo,
+            tanggal_laporan: new Date().toLocaleString('id-ID'),
+            message: `
+LAPORAN SPEAKUP
+
+═══════════════════════════════════
+
+📋 INFORMASI LAPORAN
+─────────────────────────────────
+Kategori     : ${reportData.kategori}
+Judul        : ${reportData.judul}
+Tanggal Lapor: ${new Date().toLocaleString('id-ID')}
+
+📝 KRONOLOGI
+─────────────────────────────────
+${reportData.kronologi}
+
+👥 PIHAK TERKAIT
+─────────────────────────────────
+Nama    : ${reportData.pihakTerkait.nama}
+Jabatan : ${reportData.pihakTerkait.jabatan}
+Divisi  : ${reportData.pihakTerkait.divisi}
+
+📅 DETAIL TAMBAHAN
+─────────────────────────────────
+Tanggal Kejadian : ${reportData.detailTambahan.tanggalKejadian || "-"}
+Lokasi/Project   : ${reportData.detailTambahan.lokasiProject || "-"}
+Status           : ${reportData.detailTambahan.status}
+
+📎 LAMPIRAN
+─────────────────────────────────
+${fileInfo}
+
+═══════════════════════════════════
+Laporan ini dikirim secara anonim melalui sistem SpeakUp
+Dikirim: ${new Date().toLocaleString('id-ID')}
+═══════════════════════════════════
+            `
+        };
+        
+        console.log("📧 Mengirim email ke:", RECIPIENT_EMAIL);
+        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+        console.log("✅ Email terkirim");
+        return response;
+    }
+    
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.style.background = isError ? '#dc2626' : '#10b981';
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+    
+    function saveToLocalStorage(reportData) {
+        const reports = JSON.parse(localStorage.getItem('speakup_reports') || '[]');
+        reports.push({
+            ...reportData,
+            files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
+            id: Date.now(),
+            savedAt: new Date().toISOString()
+        });
+        localStorage.setItem('speakup_reports', JSON.stringify(reports));
+        console.log("💾 Laporan disimpan ke localStorage");
+    }
+    
+    function resetForm() {
+        const judulInput = document.getElementById('judul');
+        const kronologiInput = document.getElementById('kronologi');
+        const pihakNamaInput = document.getElementById('pihakNama');
+        const pihakJabatanInput = document.getElementById('pihakJabatan');
+        const pihakDivisiInput = document.getElementById('pihakDivisi');
+        const tanggalKejadianInput = document.getElementById('tanggalKejadian');
+        const lokasiProjectInput = document.getElementById('lokasiProject');
+        const statusKejadianSelect = document.getElementById('statusKejadian');
+        
+        if (judulInput) judulInput.value = "";
+        if (kronologiInput) kronologiInput.value = "";
+        if (pihakNamaInput) pihakNamaInput.value = "";
+        if (pihakJabatanInput) pihakJabatanInput.value = "";
+        if (pihakDivisiInput) pihakDivisiInput.value = "";
+        if (tanggalKejadianInput) tanggalKejadianInput.value = "";
+        if (lokasiProjectInput) lokasiProjectInput.value = "";
+        if (statusKejadianSelect) statusKejadianSelect.value = "Masih terjadi";
+        
+        selectedCategory = "";
+        if (customCategoryDiv) customCategoryDiv.classList.add('hidden');
+        if (customCategoryInput) customCategoryInput.value = "";
+        
+        uploadedFiles = [];
+        updateFilePreview();
+        
+        const catBtns = document.querySelectorAll('.cat-btn');
+        catBtns.forEach(b => b.classList.remove('active'));
+    }
+    
+    async function submitReport(event) {
+        event.preventDefault();
+        
+        let finalCategory = selectedCategory;
+        if (selectedCategory === "Lainnya") {
+            if (!customCategoryInput.value.trim()) {
+                alert("Mohon isi kategori lainnya");
+                return;
+            }
+            finalCategory = customCategoryInput.value.trim();
+        } else if (!selectedCategory) {
+            alert("Pilih salah satu kategori masalah");
+            return;
+        }
+        
+        const judulInput = document.getElementById('judul');
+        const kronologiInput = document.getElementById('kronologi');
+        const pihakNamaInput = document.getElementById('pihakNama');
+        const pihakJabatanInput = document.getElementById('pihakJabatan');
+        const pihakDivisiInput = document.getElementById('pihakDivisi');
+        const tanggalKejadianInput = document.getElementById('tanggalKejadian');
+        const lokasiProjectInput = document.getElementById('lokasiProject');
+        const statusKejadianSelect = document.getElementById('statusKejadian');
+        
+        const judul = judulInput ? judulInput.value.trim() : "";
+        if (!judul) { alert("Isi judul masalah"); return; }
+        
+        const kronologi = kronologiInput ? kronologiInput.value.trim() : "";
+        if (!kronologi) { alert("Isi kronologi kejadian"); return; }
+        
+        const nama = (pihakNamaInput ? pihakNamaInput.value.trim() : "") || "Tidak disebutkan";
+        const jabatan = (pihakJabatanInput ? pihakJabatanInput.value.trim() : "") || "-";
+        const divisi = (pihakDivisiInput ? pihakDivisiInput.value.trim() : "") || "-";
+        const tglKejadian = tanggalKejadianInput ? tanggalKejadianInput.value : "";
+        const lokasi = lokasiProjectInput ? lokasiProjectInput.value.trim() : "";
+        const statusVal = statusKejadianSelect ? statusKejadianSelect.value : "Masih terjadi";
+        
+        const submitBtn = document.getElementById('submitReportBtn');
+        const originalText = submitBtn ? submitBtn.innerHTML : "Kirim";
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim...';
+            submitBtn.disabled = true;
+        }
+        
+        try {
+            const reportData = {
+                kategori: finalCategory,
+                judul: judul,
+                kronologi: kronologi,
+                pihakTerkait: { nama, jabatan, divisi },
+                detailTambahan: {
+                    tanggalKejadian: tglKejadian,
+                    lokasiProject: lokasi,
+                    status: statusVal
+                },
+                timestamp: new Date().toISOString(),
+                anonim: true
+            };
+            
+            await sendEmailReport(reportData);
+            showToast("📧 Laporan terkirim!", false);
+            
+            saveToLocalStorage(reportData);
+            
+            alert(`✅ Laporan anonim berhasil dikirim!\n\nLaporan telah dikirim ke:\n📧 ${RECIPIENT_EMAIL}\n📁 ${uploadedFiles.length} file dilampirkan\n\nTerima kasih atas partisipasi Anda.`);
+            resetForm();
+            if (formContainer) formContainer.classList.add('hidden');
+            if (emptyStateDiv) emptyStateDiv.classList.remove('hidden');
+            
+        } catch (error) {
+            console.error("Error:", error);
+            showToast("Gagal mengirim laporan: " + error.message, true);
+            alert(`❌ Gagal mengirim laporan.\n\nError: ${error.message}\n\nPastikan koneksi internet stabil dan coba lagi.`);
+        } finally {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    }
+    
+    // Event Listeners - SEMUA DENGAN NULL CHECK
+    if (backCheckBtn) {
+        backCheckBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert("Silakan periksa kembali data laporan Anda sebelum mengirim.");
+        });
+    }
+    
+    if (newReportBtn) {
+        newReportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Tombol Buat Laporan diklik");
+            if (formContainer && emptyStateDiv) {
+                resetForm();
+                formContainer.classList.remove('hidden');
+                emptyStateDiv.classList.add('hidden');
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        });
+    }
+    
+    if (reportForm) {
+        reportForm.addEventListener('submit', submitReport);
+    }
+    
+    // Render categories
+    renderCategories();
+    
+    console.log("🎯 SpeakUp app siap digunakan!");
+    console.log("📧 Email akan dikirim ke:", RECIPIENT_EMAIL);
+    console.log("✅ Tombol 'Buat Laporan Baru' sudah terdaftar");
+</script>
+</body>
+</html>
