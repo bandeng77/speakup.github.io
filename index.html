@@ -745,7 +745,7 @@
             await sendEmail(reportData, dropboxRes);
             saveToLocal(reportData, dropboxRes);
             showToast("Laporan anonim berhasil dikirim! Terima kasih telah bersuara.", false);
-            alert(`✅ Laporan terkirim ke HR & tim internal.\nFile tersimpan di Dropbox (Folder: ${DROPBOX_APP_FOLDER})`);
+            alert(`✅ Laporan terkirim ke HR & tim internal`);
             resetFormFields();
             formContainer.classList.add('hidden');
             emptyStateDiv.classList.remove('hidden');
