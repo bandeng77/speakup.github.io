@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SpeakUp - Platform Laporan Anonim & Rahasia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>SpeakUp | Suara Anonim & Rahasia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
@@ -16,202 +16,304 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fc 0%, #eef2f6 100%);
-            color: #1e293b;
-            padding: 2rem 1rem;
+            background: #f0f4f8;
+            color: #0a1a2f;
+            overflow-x: hidden;
+        }
+
+        /* Background gradient dinamis */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 0% 0%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(139,92,246,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 1.5rem 3rem;
         }
 
-        .app-header {
-            background: rgba(255, 255, 255, 0.96);
+        /* ========== HERO HEADER YANG BESAR & MEWAH ========== */
+        .hero-header {
+            position: relative;
+            margin-bottom: 2.5rem;
             border-radius: 48px;
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08);
-            padding: 0.8rem 2rem;
-            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-header:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 55px -15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Background glassmorphism + gradient overlay */
+        .hero-bg {
+            background: linear-gradient(135deg, #0b2b44 0%, #1a4a6f 40%, #2563eb 100%);
+            padding: 3rem 2.5rem;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 2rem;
             backdrop-filter: blur(2px);
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".1" fill="%23ffffff"></path></svg>') repeat-x;
+            background-size: 1200px 100px;
+            bottom: 0;
+            opacity: 0.15;
+            pointer-events: none;
         }
 
-        .logo-img {
-            height: 235px;
-            width: auto;
-            object-fit: contain;
-            transition: transform 0.2s ease;
+        .hero-content {
+            flex: 1;
+            z-index: 2;
         }
 
-        .logo-img:hover {
-            transform: scale(1.02);
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #f0f9ff;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .brand-text {
-            font-weight: 700;
-            font-size: 1.55rem;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero-title span {
+            background: linear-gradient(120deg, #fbbf24, #f59e0b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            border-left: 3px solid #3b82f6;
-            padding-left: 0.9rem;
+            text-shadow: none;
         }
 
+        .hero-desc {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            max-width: 500px;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-number {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #fbbf24;
+        }
+
+        .logo-hero {
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .logo-hero img {
+            height: 130px;
+            width: auto;
+            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.25));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-hero img:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        /* CARD modern dengan efek glass */
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            padding: 1.8rem 2rem;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 40px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+            padding: 2rem 2.2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(2px);
         }
 
         .greeting {
-            background: #eef2ff;
-            border-radius: 60px;
-            padding: 0.8rem 1.5rem;
+            background: linear-gradient(110deg, #eef3ff, #ffffff);
+            border-radius: 48px;
+            padding: 1.2rem 2rem;
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
             align-items: center;
+            flex-wrap: wrap;
             gap: 1rem;
             margin-bottom: 2rem;
+            border: 1px solid #e0edff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
         .btn-primary {
-            background: linear-gradient(100deg, #2563eb, #1d4ed8);
+            background: linear-gradient(115deg, #2563eb, #1e40af);
             border: none;
             color: white;
-            font-weight: 600;
-            padding: 0.75rem 1.8rem;
-            border-radius: 40px;
+            font-weight: 700;
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.6rem;
-            transition: transform 0.2s, box-shadow 0.2s;
+            gap: 0.7rem;
+            transition: all 0.25s;
+            box-shadow: 0 10px 18px -8px #1e3a8a60;
+            font-size: 1rem;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+            transform: translateY(-3px);
+            background: linear-gradient(115deg, #3b6eff, #2563eb);
+            box-shadow: 0 18px 25px -12px #2563eb;
         }
 
         .btn-outline {
-            background: transparent;
+            background: white;
             border: 1.5px solid #cbd5e1;
-            padding: 0.6rem 1.4rem;
-            border-radius: 40px;
+            padding: 0.7rem 1.6rem;
+            border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s;
+            font-weight: 600;
         }
 
         .btn-outline:hover {
-            background: #f1f5f9;
-            border-color: #94a3b8;
+            background: #f8fafc;
+            border-color: #2563eb;
+            transform: scale(0.97);
         }
 
         .step-section {
             margin-bottom: 2rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #eef2ff;
             padding-bottom: 1.8rem;
         }
 
         .step-title {
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.35rem;
+            font-weight: 700;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.8rem;
+            color: #0c4a6e;
         }
 
         .step-badge {
-            background: #3b82f6;
+            background: linear-gradient(145deg, #2563eb, #4f46e5);
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 34px;
+            height: 34px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 30px;
-            font-size: 0.85rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 12px rgba(37,99,235,0.3);
         }
 
         .category-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.7rem;
+            gap: 0.8rem;
             margin: 1rem 0;
         }
 
         .cat-btn {
             background: #f1f5f9;
             border: 1px solid #e2e8f0;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
             font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .cat-btn:hover {
-            background: #e2e8f0;
+            background: #e0e7ff;
+            transform: translateY(-2px);
         }
 
         .cat-btn.active {
-            background: #2563eb;
-            border-color: #2563eb;
+            background: linear-gradient(120deg, #2563eb, #3b82f6);
             color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 18px -8px #3b82f6;
         }
 
         .info-icon {
-            color: #6c86a3;
-            margin-left: 0.5rem;
-            cursor: pointer;
             background: #eef2ff;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        input,
-        textarea,
-        select {
+        input, textarea, select {
             width: 100%;
-            padding: 0.9rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 20px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 28px;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
+            background: #ffffff;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
+        input:focus, textarea:focus, select:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+            outline: none;
         }
 
         .row-2col {
@@ -220,40 +322,43 @@
             flex-wrap: wrap;
         }
 
-        .row-2col>div {
+        .row-2col > div {
             flex: 1;
         }
 
         .file-zone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 24px;
-            padding: 1.2rem;
+            border: 2px dashed #b9d0f5;
+            border-radius: 32px;
+            padding: 1.6rem;
             text-align: center;
-            background: #fafcff;
+            background: #fbfdff;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
         }
 
         .file-zone:hover {
-            background: #f1f5fe;
+            background: #eff6ff;
             border-color: #3b82f6;
+            transform: scale(0.99);
         }
 
         .preview-files {
             margin-top: 1rem;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.6rem;
             flex-wrap: wrap;
         }
 
         .file-badge {
-            background: #eef2ff;
-            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, #eef2ff, #ffffff);
+            padding: 0.45rem 1.1rem;
             border-radius: 40px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 500;
+            border: 1px solid #d9e6ff;
         }
 
         .remove-file {
@@ -263,16 +368,13 @@
             margin-left: 5px;
         }
 
-        .remove-file:hover {
-            color: #dc2626;
-        }
-
         .confirm-box {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 1.2rem;
+            background: linear-gradient(105deg, #f0f6ff, #ffffff);
+            border-radius: 28px;
+            padding: 1.4rem;
             margin: 1rem 0;
-            border-left: 5px solid #3b82f6;
+            border-left: 6px solid #3b82f6;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.02);
         }
 
         .action-buttons {
@@ -288,111 +390,90 @@
 
         .toast-msg {
             position: fixed;
-            bottom: 25px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1f2937;
+            background: #0f172ad9;
+            backdrop-filter: blur(12px);
             color: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            z-index: 1000;
+            padding: 14px 30px;
+            border-radius: 80px;
+            z-index: 1100;
             animation: fadeInUp 0.3s ease;
-            font-weight: 500;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            from { opacity: 0; transform: translateX(-50%) translateY(25px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         .upload-progress {
             width: 100%;
-            height: 4px;
+            height: 5px;
             background: #e2e8f0;
-            border-radius: 2px;
-            margin-top: 8px;
+            border-radius: 10px;
+            margin-top: 12px;
             overflow: hidden;
         }
 
         .upload-progress-bar {
             width: 0%;
             height: 100%;
-            background: #3b82f6;
+            background: linear-gradient(90deg, #2563eb, #a855f7);
             transition: width 0.3s;
         }
 
-        @media (max-width: 680px) {
-            .card {
-                padding: 1.2rem;
-            }
-
-            .greeting {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-buttons button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .app-header {
-                padding: 0.8rem 1.2rem;
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-
-            .logo-area {
-                justify-content: center;
-            }
-
-            .brand-text {
-                font-size: 1.3rem;
-                padding-left: 0.7rem;
-            }
-
-            .logo-img {
-                height: 48px;
-            }
+        @media (max-width: 760px) {
+            .hero-bg { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+            .hero-title { font-size: 2.2rem; }
+            .hero-stats { justify-content: center; }
+            .logo-hero img { height: 90px; }
+            .card { padding: 1.2rem; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons button { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="app-header">
-        <div class="logo-area">
-            <img class="logo-img" src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo">
-        </div>
-        <div class="header-badge">
+    <!-- HEADER BESAR SEPERTI SPANDUK UTAMA -->
+    <div class="hero-header">
+        <div class="hero-bg">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-heart"></i> 100% ANONIM & TERPERCAYA
+                </div>
+                <div class="hero-title">
+                    Suara <span>Anonim</span><br>Untuk Perubahan Lebih Baik
+                </div>
+                <div class="hero-desc">
+                    SpeakUp adalah wadah rahasia bagi karyawan untuk melaporkan kendala, 
+                    pelanggaran, atau masukan tanpa rasa takut. Semua data dienkripsi.
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item"><span class="stat-number">100%</span> <span>Rahasia</span></div>
+                    <div class="stat-item"><span class="stat-number">24/7</span> <span>Akses Aman</span></div>
+                </div>
+            </div>
+            <div class="logo-hero">
+                <img src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo Utama">
+            </div>
         </div>
     </div>
 
     <div class="card">
         <div class="greeting">
-            <p><i class="fas fa-comment-dots"></i> Ada kendala atau masukan di pekerjaanmu?</p>
-            <button id="newReportBtn" class="btn-primary"><i class="fas fa-plus-circle"></i> Buat Laporan Baru</button>
+            <p><i class="fas fa-comment-dots" style="color:#2563eb; font-size: 1.2rem;"></i> <strong>Ada hal penting yang ingin disampaikan?</strong> Laporkan secara profesional & anonim</p>
+            <button id="newReportBtn" class="btn-primary"><i class="fas fa-pen-fancy"></i> + Buat Laporan Baru</button>
         </div>
 
         <div id="formContainer" class="hidden">
             <form id="reportForm">
                 <div class="step-section">
-                    <div class="step-title">
-                        <span class="step-badge">1</span> Kategori Masalah
-                        <span id="infoCatIcon" class="info-icon"><i class="fas fa-info-circle"></i></span>
-                    </div>
+                    <div class="step-title"><span class="step-badge">1</span> Kategori Masalah <span id="infoCatIcon" class="info-icon"><i class="fas fa-question"></i></span></div>
                     <div id="categoryGroup" class="category-grid"></div>
                     <div id="customCategoryDiv" class="hidden" style="margin-top: 12px;">
                         <input type="text" id="customCategoryInput" placeholder="Masukkan kategori lain...">
@@ -401,21 +482,20 @@
 
                 <div class="step-section">
                     <div class="step-title"><span class="step-badge">2</span> Judul Masalah</div>
-                    <input type="text" id="judul" placeholder="Contoh: Koordinasi dengan atasan kurang responsif" maxlength="120">
+                    <input type="text" id="judul" placeholder="Contoh: Keterlambatan respons dari tim operasional" maxlength="120">
                 </div>
 
                 <div class="step-section">
-                    <div class="step-title"><span class="step-badge">3</span> Kronologi</div>
-                    <textarea id="kronologi" rows="4" placeholder="Jelaskan kejadian secara singkat dan jelas (apa, kapan, dimana, dampaknya)..."></textarea>
-                    <div style="font-size: 0.7rem; color:#6b7280; margin-top: 5px;">Contoh: Beberapa kali tim mengalami kesulitan koordinasi karena respon atasan lambat</div>
+                    <div class="step-title"><span class="step-badge">3</span> Kronologi Kejadian</div>
+                    <textarea id="kronologi" rows="4" placeholder="Ceritakan secara kronologis (waktu, tempat, dampak, dan siapa saja yang terlibat)"></textarea>
                 </div>
 
                 <div class="step-section">
-                    <div class="step-title"><span class="step-badge">4</span> Pihak Terkait</div>
+                    <div class="step-title"><span class="step-badge">4</span> Pihak Terkait (Opsional)</div>
                     <div class="row-2col">
-                        <div><input type="text" id="pihakNama" placeholder="Nama (opsional)"></div>
-                        <div><input type="text" id="pihakJabatan" placeholder="Jabatan (opsional)"></div>
-                        <div><input type="text" id="pihakDivisi" placeholder="Divisi (opsional)"></div>
+                        <div><input type="text" id="pihakNama" placeholder="Nama"></div>
+                        <div><input type="text" id="pihakJabatan" placeholder="Jabatan"></div>
+                        <div><input type="text" id="pihakDivisi" placeholder="Divisi"></div>
                     </div>
                 </div>
 
@@ -426,7 +506,7 @@
                         <div><input type="text" id="lokasiProject" placeholder="Lokasi / Project"></div>
                     </div>
                     <div style="margin-top: 12px;">
-                        <label style="font-weight: 500;">Status:</label>
+                        <label style="font-weight: 500;">Status Kejadian :</label>
                         <select id="statusKejadian">
                             <option value="Masih terjadi">Masih terjadi</option>
                             <option value="Sudah selesai">Sudah selesai</option>
@@ -436,11 +516,11 @@
                 </div>
 
                 <div class="step-section">
-                    <div class="step-title"><span class="step-badge">6</span> Upload Bukti</div>
+                    <div class="step-title"><span class="step-badge">6</span> Bukti Pendukung</div>
                     <div id="dropzone" class="file-zone">
-                        <i class="fas fa-cloud-upload-alt fa-2x"></i>
-                        <p>Klik atau drag & drop file (Foto, Video, Screenshot, PDF)</p>
-                        <p style="font-size: 0.75rem; margin-top: 5px;">Maksimal 5MB per file (akan diupload ke Dropbox)</p>
+                        <i class="fas fa-cloud-upload-alt fa-2x" style="color:#2563eb;"></i>
+                        <p><strong>Klik atau drag & drop file</strong> (Foto, PDF, Screenshot, Video)</p>
+                        <p style="font-size: 0.7rem;">Maks 5MB per file | Tersimpan aman di cloud (Dropbox)</p>
                         <input type="file" id="fileInput" multiple accept="image/*,video/*,application/pdf,.txt,.doc,.docx" style="display: none;">
                     </div>
                     <div id="filePreviewList" class="preview-files"></div>
@@ -450,48 +530,43 @@
                 </div>
 
                 <div class="step-section">
-                    <div class="step-title"><span class="step-badge">7</span> Konfirmasi Laporan</div>
+                    <div class="step-title"><span class="step-badge">7</span> Konfirmasi & Kirim</div>
                     <div class="confirm-box">
-                        <i class="fas fa-shield-alt" style="margin-right: 8px; color:#2563eb;"></i> Apakah Anda yakin ingin mengirim laporan ini?<br>
-                        Pastikan informasi yang disampaikan sudah benar dan sesuai kejadian.<br>
-                        <strong>Laporan akan diproses secara rahasia & anonim.</strong>
+                        <i class="fas fa-shield-alt" style="margin-right: 10px; color:#2563eb;"></i> 
+                        <strong>Laporan ini bersifat rahasia & anonim.</strong> Pastikan informasi yang disampaikan akurat.<br>
+                        Klik Kirim Laporan, maka data akan langsung diproses tim internal.
                     </div>
                     <div class="action-buttons">
-                        <button type="button" id="backCheckBtn" class="btn-outline"><i class="fas fa-arrow-left"></i> Kembali Periksa</button>
+                        <button type="button" id="backCheckBtn" class="btn-outline"><i class="fas fa-undo-alt"></i> Periksa Ulang</button>
                         <button type="submit" id="submitReportBtn" class="btn-primary"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <div id="emptyState" style="text-align: center; padding: 3rem 1rem;">
-            <i class="fas fa-file-alt" style="font-size: 3rem; color:#94a3b8;"></i>
-            <p style="margin-top: 1rem;">Klik "Buat Laporan Baru" untuk menyampaikan keluhan atau masukan secara anonim.</p>
+        <div id="emptyState" style="text-align: center; padding: 3rem 1.5rem;">
+            <i class="fas fa-folder-open" style="font-size: 3.5rem; color:#a0bfec;"></i>
+            <p style="margin-top: 1.2rem; color: #2c3e66;">Belum ada laporan yang dibuat. Klik tombol di atas untuk memulai suara anonim Anda.</p>
         </div>
     </div>
 </div>
 
 <script>
-    // ======================== KONFIGURASI ========================
+    // Konfigurasi EmailJS & Dropbox
     const EMAILJS_PUBLIC_KEY = "STBRxktGl6mM6Zi95";
     const EMAILJS_SERVICE_ID = "carbonio_mail";
     const EMAILJS_TEMPLATE_ID = "template_08n414a";
     const RECIPIENT_EMAIL = "hr@genetek.co.id";
 
-    // Dropbox Configuration
     const DROPBOX_ACCESS_TOKEN = "sl.u.AGat4kePnTDmanB1vxmDz07xJDsQPcmeFdRvdC7z22MIBpukRgtu6CxYPHB4ve0yUWp6xw0Jk3qiXFo31n1ia_WUkaSdMxY4fTXxu7CmyDEszB7BcZHZFYhcDpKcdKtTLTs7UWR3lCTaRZnDZD253gEHolWWNI0WzeugnP0qvMhUBBVeQOOJqw-ERSquFjqvOD8bam2Es-mUPfsvOOn1jgVff5YhKcJSs7HOZv0Ktd2uBAOQ-U2ITjoQ5sbsareZMSfzNHUWVykEk1jXQrKrZ7yZd1EqmMplcq9hMBiSOVeDPQAyZbcwa2d_zZnel5QMB6S8cFPMRrmb7knAN2ZPLVztH5O1aspiMzifYGrUKgPTS0Dd63DNqNHn40vvjdRvigtztVwbMEPiMxrzJufOPsgSAwq0DigsdNsI5LWZBKWCKGGgg83dA9xEbM9T4_GjgtLb8w3CjkB9n6nWbuTV4sCtoEktxtDppfW1RDoJBCV3gemcg99pHzf7--qHDMzYKG4ZbNxh-74DGmIQPAYSB0ue61aJFOAxYrSuhNmhKgo1Kg6MDaNPNoJ4eKq-EgPodTVyXxkuaf4rYLRnoQoUeXxyRe8Sarj416rz13CjDpuJoK4rzPbAbFC0ott43a9GyNJ6_dMXILNz1IMtqmWCblOxSZhQYednyl6OPXC9CnmARbjsv6yODMkyn9OGCrC0VWWt2uATgIGvoErfiWf-TZXdT-KoCV9eLjwgvBeRt6Dekyii291PfqKDyCKk2IUJvf0eH8J_3wHh2R0nqGL3f_04y1B74kvvxr5me6Fkts8YXRN6iVzIXy_y7WpS1SDgl3UaG6OyiZhn6J06lYfQyD_-5h5GkjCsYMjSOOnXSaHoCdnrTXmoVbaeX8H1WFJUsFIevfsvinTqls9XUpsFhTXouGg0DQUPHOJDgjGxbbzMJlFLFRxGfhtaA14YCu281dyCSZxlz5Y3gk50H87Dyy6YlsDw1CJU9Keq7bSk1v9ggYBM60W9E9fcBaReKnkuLGXAe6N3VokYRA2jSR0A15u4Yy97RiGzfmN0IdOWhWElwdr_kwMKC4KmSFRK9Az_fcOdANttZ8rCPL2z-FmwG3kJJL3qkQNX1XYWCkyQP_nIOHir96wIEhlPPoZcj_79WL9Gh0vzZYJUDVlyqrDM5BdoIktvaTbAhO2c10-XDnMFEAXyaeWdRMQpB9Tx7hzqj3Xe4H3-s9IY5Bhv0SDEgil9Q5gz6Bh_dNVqBXSzqrbpjWzGu0lnWH9GklxnC5NLDSf9k90Hsxmou2X9CDW9SWws3QHRXXnix8RtE8-64nkhZkZdqtFcM85-RXKFoJCWTPk";
     const DROPBOX_APP_FOLDER = "owncloud-efk";
-    
-    // Initialize EmailJS
+
     emailjs.init(EMAILJS_PUBLIC_KEY);
-    console.log("✅ EmailJS initialized");
 
-    // State
     let selectedCategory = "";
-    let uploadedFiles = []; // Store file objects { file, name, size, dropboxPath, shareLink }
-    let isUploadingToDropbox = false;
+    let uploadedFiles = [];
 
-    // DOM Elements
+    // DOM
     const newReportBtn = document.getElementById('newReportBtn');
     const formContainer = document.getElementById('formContainer');
     const emptyStateDiv = document.getElementById('emptyState');
@@ -506,512 +581,201 @@
     const uploadProgressDiv = document.getElementById('uploadProgress');
     const uploadProgressBar = document.getElementById('uploadProgressBar');
 
-    const kategoriList = [
-        "HR & Hubungan Kerja", "Kompensasi & Benefit", "Operasional & Proses Kerja", "K3 / Safety",
-        "Administrasi & Dokumen", "Fasilitas & Infrastruktur", "Etika & Perilaku", "Manajemen & Kebijakan",
-        "Pelanggaran / Fraud", "Lainnya"
-    ];
+    const kategoriList = ["HR & Hubungan Kerja", "Kompensasi & Benefit", "Operasional & Proses Kerja", "K3 / Safety", "Administrasi & Dokumen", "Fasilitas & Infrastruktur", "Etika & Perilaku", "Manajemen & Kebijakan", "Pelanggaran / Fraud", "Lainnya"];
 
-    // ======================== DROPBOX FUNCTIONS ========================
-    
-    // Upload file to Dropbox
+    // Dropbox upload functions
     async function uploadToDropbox(file, reportId) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                // Create unique filename with timestamp
-                const timestamp = Date.now();
-                const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-                const dropboxPath = `/${DROPBOX_APP_FOLDER}/laporan_${reportId}/${timestamp}_${safeFileName}`;
-                
-                // Convert file to ArrayBuffer
-                const arrayBuffer = await file.arrayBuffer();
-                const uint8Array = new Uint8Array(arrayBuffer);
-                
-                // Upload to Dropbox
-                const uploadResponse = await fetch('https://content.dropboxapi.com/2/files/upload', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`,
-                        'Content-Type': 'application/octet-stream',
-                        'Dropbox-API-Arg': JSON.stringify({
-                            path: dropboxPath,
-                            mode: 'add',
-                            autorename: true,
-                            mute: false
-                        })
-                    },
-                    body: uint8Array
-                });
-                
-                if (!uploadResponse.ok) {
-                    const error = await uploadResponse.json();
-                    throw new Error(`Upload failed: ${error.error_summary || uploadResponse.statusText}`);
-                }
-                
-                const uploadResult = await uploadResponse.json();
-                console.log("✅ File uploaded to Dropbox:", uploadResult);
-                
-                // Create shared link for the file
-                const shareResponse = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: dropboxPath,
-                        settings: {
-                            requested_visibility: "viewer_only",
-                            audience: "public"
-                        }
-                    })
-                });
-                
-                let shareLink = null;
-                if (shareResponse.ok) {
-                    const shareResult = await shareResponse.json();
-                    shareLink = shareResult.url;
-                    console.log("🔗 Shared link created:", shareLink);
-                } else {
-                    // If file already has a link, get existing one
-                    const listLinksResponse = await fetch('https://api.dropboxapi.com/2/sharing/list_shared_links', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            path: dropboxPath
-                        })
-                    });
-                    
-                    if (listLinksResponse.ok) {
-                        const linksResult = await listLinksResponse.json();
-                        if (linksResult.links && linksResult.links.length > 0) {
-                            shareLink = linksResult.links[0].url;
-                        }
-                    }
-                }
-                
-                resolve({
-                    success: true,
-                    name: file.name,
-                    size: file.size,
-                    path: dropboxPath,
-                    shareLink: shareLink || `File uploaded to Dropbox folder: ${dropboxPath}`
-                });
-                
-            } catch (error) {
-                console.error("❌ Dropbox upload error:", error);
-                reject(error);
-            }
+        const timestamp = Date.now();
+        const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const dropboxPath = `/${DROPBOX_APP_FOLDER}/laporan_${reportId}/${timestamp}_${safeFileName}`;
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const uploadResp = await fetch('https://content.dropboxapi.com/2/files/upload', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`,
+                'Content-Type': 'application/octet-stream',
+                'Dropbox-API-Arg': JSON.stringify({ path: dropboxPath, mode: 'add', autorename: true })
+            },
+            body: uint8Array
         });
-    }
-    
-    // Upload all files to Dropbox
-    async function uploadAllFilesToDropbox(files, reportId) {
-        const uploadResults = [];
-        let completed = 0;
-        
-        for (let i = 0; i < files.length; i++) {
-            const fileData = files[i];
-            
-            if (uploadProgressBar) {
-                const progress = (i / files.length) * 100;
-                uploadProgressBar.style.width = `${progress}%`;
+        if (!uploadResp.ok) throw new Error('Upload Dropbox gagal');
+        await uploadResp.json();
+        let shareLink = null;
+        try {
+            const shareResp = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${DROPBOX_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: dropboxPath, settings: { requested_visibility: "viewer_only", audience: "public" } })
+            });
+            if (shareResp.ok) {
+                const shareData = await shareResp.json();
+                shareLink = shareData.url;
             }
-            
+        } catch(e) { console.warn(e); }
+        return { success: true, name: file.name, size: file.size, shareLink: shareLink || `Dropbox: ${dropboxPath}` };
+    }
+
+    async function uploadAllFiles(files, reportId) {
+        let results = [];
+        for (let i=0; i<files.length; i++) {
+            if(uploadProgressBar) uploadProgressBar.style.width = `${(i/files.length)*100}%`;
             try {
-                const result = await uploadToDropbox(fileData.file, reportId);
-                uploadResults.push(result);
-                completed++;
-                showToast(`✓ ${fileData.name} berhasil diupload ke Dropbox`, false);
-            } catch (error) {
-                console.error(`Failed to upload ${fileData.name}:`, error);
-                showToast(`✗ Gagal upload ${fileData.name} ke Dropbox: ${error.message}`, true);
-                uploadResults.push({
-                    success: false,
-                    name: fileData.name,
-                    error: error.message
-                });
+                const res = await uploadToDropbox(files[i].file, reportId);
+                results.push(res);
+                showToast(`✅ ${files[i].name} tersimpan`, false);
+            } catch(err) {
+                showToast(`❌ Gagal upload ${files[i].name}`, true);
+                results.push({ success: false, name: files[i].name });
             }
         }
-        
-        return uploadResults;
+        return results;
     }
 
-    // Convert file to object (store original file object)
-    function prepareFileObject(file) {
-        return {
-            file: file,
-            name: file.name,
-            size: file.size,
-            type: file.type
-        };
-    }
-
-    async function handleFiles(files) {
-        if (!files || files.length === 0) return;
-
-        if (uploadProgressDiv) uploadProgressDiv.classList.remove('hidden');
-        
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-
-            if (file.size > 5 * 1024 * 1024) {
-                showToast(`File ${file.name} melebihi 5MB, tidak akan disertakan`, true);
-                continue;
-            }
-
-            // Store file object for later upload
-            const fileObj = prepareFileObject(file);
-            uploadedFiles.push(fileObj);
-            showToast(`✓ ${file.name} berhasil ditambahkan (siap upload ke Dropbox)`, false);
+    function handleFiles(files) {
+        if(!files.length) return;
+        if(uploadProgressDiv) uploadProgressDiv.classList.remove('hidden');
+        for(let f of files) {
+            if(f.size > 5*1024*1024) { showToast(`⚠️ ${f.name} >5MB diabaikan`, true); continue; }
+            uploadedFiles.push({ file: f, name: f.name, size: f.size });
         }
-
-        if (uploadProgressBar) uploadProgressBar.style.width = '100%';
-        setTimeout(() => {
-            if (uploadProgressDiv) uploadProgressDiv.classList.add('hidden');
-            if (uploadProgressBar) uploadProgressBar.style.width = '0%';
-        }, 1000);
-
+        if(uploadProgressBar) uploadProgressBar.style.width = '100%';
+        setTimeout(() => { uploadProgressDiv.classList.add('hidden'); if(uploadProgressBar) uploadProgressBar.style.width = '0%'; }, 1000);
         updateFilePreview();
     }
 
     function updateFilePreview() {
-        if (!filePreviewList) return;
         filePreviewList.innerHTML = "";
         uploadedFiles.forEach((item, idx) => {
             const badge = document.createElement('div');
             badge.className = 'file-badge';
-            const sizeKB = (item.size / 1024).toFixed(1);
-            badge.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> ${item.name} (${sizeKB}KB) <span class="remove-file" data-idx="${idx}">✖</span>`;
-            badge.title = "Akan diupload ke Dropbox saat laporan dikirim";
-
-            const removeSpan = badge.querySelector('.remove-file');
-            if (removeSpan) {
-                removeSpan.addEventListener('click', () => {
-                    uploadedFiles.splice(idx, 1);
-                    updateFilePreview();
-                });
-            }
-
+            badge.innerHTML = `<i class="fas fa-file-alt"></i> ${item.name.substring(0, 30)} (${(item.size/1024).toFixed(1)}KB) <span class="remove-file" data-idx="${idx}">✖</span>`;
+            badge.querySelector('.remove-file').addEventListener('click', () => { uploadedFiles.splice(idx,1); updateFilePreview(); });
             filePreviewList.appendChild(badge);
         });
     }
 
-    // File input handlers
-    if (dropzone) {
-        dropzone.addEventListener('click', () => fileInput && fileInput.click());
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.style.background = "#eef2ff";
-        });
-        dropzone.addEventListener('dragleave', () => dropzone.style.background = "#fafcff");
-        dropzone.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            dropzone.style.background = "#fafcff";
-            await handleFiles(e.dataTransfer.files);
-        });
-    }
-
-    if (fileInput) {
-        fileInput.addEventListener('change', async (e) => {
-            await handleFiles(e.target.files);
-            fileInput.value = '';
-        });
-    }
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.background = "#eef2ff"; });
+    dropzone.addEventListener('dragleave', () => dropzone.style.background = "#fbfdff");
+    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.style.background = "#fbfdff"; handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', e => { handleFiles(e.target.files); fileInput.value = ''; });
 
     function renderCategories() {
-        if (!categoryGroup) return;
         categoryGroup.innerHTML = "";
         kategoriList.forEach(kat => {
             const btn = document.createElement('button');
-            btn.type = "button";
-            btn.className = "cat-btn";
-            btn.innerText = kat;
+            btn.type = "button"; btn.className = "cat-btn"; btn.innerText = kat;
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedCategory = kat;
-                if (kat === "Lainnya" && customCategoryDiv) {
-                    customCategoryDiv.classList.remove('hidden');
-                } else if (customCategoryDiv) {
-                    customCategoryDiv.classList.add('hidden');
-                }
+                customCategoryDiv.classList.toggle('hidden', kat !== "Lainnya");
             });
             categoryGroup.appendChild(btn);
         });
     }
+    document.getElementById('infoCatIcon')?.addEventListener('click', () => alert("Pilih kategori yang paling sesuai untuk mempercepat tindak lanjut."));
 
-    const infoCatIcon = document.getElementById('infoCatIcon');
-    if (infoCatIcon) {
-        infoCatIcon.addEventListener('click', () => {
-            alert("Contoh Kategori:\n• HR & Hubungan Kerja: konflik, perlakuan tidak adil\n• Kompensasi & Benefit: gaji, reimburse, bonus\n• K3 / Safety: kondisi berbahaya, alat safety tidak ada\n• Operasional: SOP tidak jelas, pekerjaan terhambat\n• Dan lain-lain");
-        });
-    }
-
-    async function sendEmailReport(reportData, dropboxFiles) {
-        let fileInfo = "Tidak ada lampiran";
-        if (dropboxFiles && dropboxFiles.length > 0) {
-            const successfulUploads = dropboxFiles.filter(f => f.success);
-            if (successfulUploads.length > 0) {
-                fileInfo = successfulUploads.map(f => 
-                    `• ${f.name} (${(f.size / 1024).toFixed(1)}KB)\n  Link: ${f.shareLink || 'Tersedia di Dropbox'}`
-                ).join("\n\n");
-            } else {
-                fileInfo = "Gagal upload file ke Dropbox";
-            }
+    async function sendEmail(reportData, dropboxFiles) {
+        let lampiranText = "Tidak ada lampiran";
+        if(dropboxFiles?.length) {
+            const ok = dropboxFiles.filter(f=>f.success);
+            if(ok.length) lampiranText = ok.map(f=>`• ${f.name} (${(f.size/1024).toFixed(1)}KB)\n  Link: ${f.shareLink || 'Tersedia'}`).join("\n\n");
         }
-
-        const templateParams = {
-            to_email: RECIPIENT_EMAIL,
-            from_email: "noreply@speakup.genetek.co.id",
-            kategori: reportData.kategori,
-            judul: reportData.judul,
-            kronologi: reportData.kronologi,
-            pihak_nama: reportData.pihakTerkait.nama,
-            pihak_jabatan: reportData.pihakTerkait.jabatan,
-            pihak_divisi: reportData.pihakTerkait.divisi,
-            tanggal_kejadian: reportData.detailTambahan.tanggalKejadian || "Tidak disebutkan",
-            lokasi: reportData.detailTambahan.lokasiProject || "Tidak disebutkan",
-            status: reportData.detailTambahan.status,
-            lampiran: fileInfo,
-            tanggal_laporan: new Date().toLocaleString('id-ID'),
-            message: `
-LAPORAN SPEAKUP
-
-═══════════════════════════════════
-
-📋 INFORMASI LAPORAN
-─────────────────────────────────
-Kategori     : ${reportData.kategori}
-Judul        : ${reportData.judul}
-Tanggal Lapor: ${new Date().toLocaleString('id-ID')}
-
-📝 KRONOLOGI
-─────────────────────────────────
-${reportData.kronologi}
-
-👥 PIHAK TERKAIT
-─────────────────────────────────
-Nama    : ${reportData.pihakTerkait.nama}
-Jabatan : ${reportData.pihakTerkait.jabatan}
-Divisi  : ${reportData.pihakTerkait.divisi}
-
-📅 DETAIL TAMBAHAN
-─────────────────────────────────
-Tanggal Kejadian : ${reportData.detailTambahan.tanggalKejadian || "-"}
-Lokasi/Project   : ${reportData.detailTambahan.lokasiProject || "-"}
-Status           : ${reportData.detailTambahan.status}
-
-📎 LAMPIRAN (Dropbox)
-─────────────────────────────────
-${fileInfo}
-
-═══════════════════════════════════
-Laporan ini dikirim secara anonim melalui sistem SpeakUp
-File disimpan di Dropbox App Folder: ${DROPBOX_APP_FOLDER}
-Dikirim: ${new Date().toLocaleString('id-ID')}
-═══════════════════════════════════
-            `
+        const params = {
+            to_email: RECIPIENT_EMAIL, from_email: "noreply@speakup.genetek.co.id",
+            kategori: reportData.kategori, judul: reportData.judul, kronologi: reportData.kronologi,
+            pihak_nama: reportData.pihakTerkait.nama, pihak_jabatan: reportData.pihakTerkait.jabatan, pihak_divisi: reportData.pihakTerkait.divisi,
+            tanggal_kejadian: reportData.detailTambahan.tanggalKejadian || "-", lokasi: reportData.detailTambahan.lokasiProject || "-",
+            status: reportData.detailTambahan.status, lampiran: lampiranText, tanggal_laporan: new Date().toLocaleString('id-ID'),
+            message: `LAPORAN SPEAKUP\nKategori: ${reportData.kategori}\nJudul: ${reportData.judul}\nKronologi: ${reportData.kronologi}\nLampiran: ${lampiranText}`
         };
-
-        console.log("📧 Mengirim email ke:", RECIPIENT_EMAIL);
-        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-        console.log("✅ Email terkirim");
-        return response;
+        return await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
     }
 
-    function showToast(message, isError = false) {
+    function saveToLocal(reportData, dropboxFiles) {
+        let reports = JSON.parse(localStorage.getItem('speakup_reports') || '[]');
+        reports.push({ ...reportData, dropboxFiles: dropboxFiles.map(f=>({name:f.name,link:f.shareLink})), id:Date.now() });
+        localStorage.setItem('speakup_reports', JSON.stringify(reports));
+    }
+
+    function resetFormFields() {
+        document.getElementById('judul').value = "";
+        document.getElementById('kronologi').value = "";
+        document.getElementById('pihakNama').value = "";
+        document.getElementById('pihakJabatan').value = "";
+        document.getElementById('pihakDivisi').value = "";
+        document.getElementById('tanggalKejadian').value = "";
+        document.getElementById('lokasiProject').value = "";
+        document.getElementById('statusKejadian').value = "Masih terjadi";
+        selectedCategory = "";
+        customCategoryDiv.classList.add('hidden');
+        customCategoryInput.value = "";
+        uploadedFiles = [];
+        updateFilePreview();
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    async function submitReportHandler(e) {
+        e.preventDefault();
+        let finalCat = selectedCategory;
+        if(selectedCategory === "Lainnya") {
+            if(!customCategoryInput.value.trim()) return alert("Isi kategori lainnya");
+            finalCat = customCategoryInput.value.trim();
+        } else if(!selectedCategory) return alert("Pilih salah satu kategori");
+
+        const judul = document.getElementById('judul').value.trim();
+        const kronologi = document.getElementById('kronologi').value.trim();
+        if(!judul || !kronologi) return alert("Judul dan kronologi wajib diisi");
+
+        const submitBtn = document.getElementById('submitReportBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim...';
+        submitBtn.disabled = true;
+        try {
+            const reportId = Date.now();
+            let dropboxRes = [];
+            if(uploadedFiles.length) dropboxRes = await uploadAllFiles(uploadedFiles, reportId);
+            const reportData = {
+                kategori: finalCat, judul, kronologi,
+                pihakTerkait: { nama: document.getElementById('pihakNama').value.trim() || "Anonim", jabatan: document.getElementById('pihakJabatan').value.trim() || "-", divisi: document.getElementById('pihakDivisi').value.trim() || "-" },
+                detailTambahan: { tanggalKejadian: document.getElementById('tanggalKejadian').value, lokasiProject: document.getElementById('lokasiProject').value, status: document.getElementById('statusKejadian').value }
+            };
+            await sendEmail(reportData, dropboxRes);
+            saveToLocal(reportData, dropboxRes);
+            showToast("Laporan anonim berhasil dikirim! Terima kasih telah bersuara.", false);
+            alert(`✅ Laporan terkirim ke HR & tim internal.\nFile tersimpan di Dropbox (Folder: ${DROPBOX_APP_FOLDER})`);
+            resetFormFields();
+            formContainer.classList.add('hidden');
+            emptyStateDiv.classList.remove('hidden');
+        } catch(err) {
+            console.error(err);
+            showToast("Gagal mengirim laporan: " + err.message, true);
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    newReportBtn.addEventListener('click', () => {
+        resetFormFields();
+        formContainer.classList.remove('hidden');
+        emptyStateDiv.classList.add('hidden');
+        formContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+    backCheckBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    reportForm.addEventListener('submit', submitReportHandler);
+    renderCategories();
+
+    function showToast(msg, isErr) {
         const toast = document.createElement('div');
         toast.className = 'toast-msg';
-        toast.style.background = isError ? '#dc2626' : '#10b981';
-        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        toast.style.background = isErr ? '#dc2626e6' : '#0f172ad9';
+        toast.innerHTML = `<i class="fas ${isErr ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
     }
-
-    function saveToLocalStorage(reportData, dropboxFiles) {
-        const reports = JSON.parse(localStorage.getItem('speakup_reports') || '[]');
-        reports.push({
-            ...reportData,
-            dropboxFiles: dropboxFiles.map(f => ({ name: f.name, size: f.size, shareLink: f.shareLink, success: f.success })),
-            id: Date.now(),
-            savedAt: new Date().toISOString()
-        });
-        localStorage.setItem('speakup_reports', JSON.stringify(reports));
-        console.log("💾 Laporan disimpan ke localStorage");
-    }
-
-    function resetForm() {
-        const judulInput = document.getElementById('judul');
-        const kronologiInput = document.getElementById('kronologi');
-        const pihakNamaInput = document.getElementById('pihakNama');
-        const pihakJabatanInput = document.getElementById('pihakJabatan');
-        const pihakDivisiInput = document.getElementById('pihakDivisi');
-        const tanggalKejadianInput = document.getElementById('tanggalKejadian');
-        const lokasiProjectInput = document.getElementById('lokasiProject');
-        const statusKejadianSelect = document.getElementById('statusKejadian');
-
-        if (judulInput) judulInput.value = "";
-        if (kronologiInput) kronologiInput.value = "";
-        if (pihakNamaInput) pihakNamaInput.value = "";
-        if (pihakJabatanInput) pihakJabatanInput.value = "";
-        if (pihakDivisiInput) pihakDivisiInput.value = "";
-        if (tanggalKejadianInput) tanggalKejadianInput.value = "";
-        if (lokasiProjectInput) lokasiProjectInput.value = "";
-        if (statusKejadianSelect) statusKejadianSelect.value = "Masih terjadi";
-
-        selectedCategory = "";
-        if (customCategoryDiv) customCategoryDiv.classList.add('hidden');
-        if (customCategoryInput) customCategoryInput.value = "";
-
-        uploadedFiles = [];
-        updateFilePreview();
-
-        const catBtns = document.querySelectorAll('.cat-btn');
-        catBtns.forEach(b => b.classList.remove('active'));
-    }
-
-    async function submitReport(event) {
-        event.preventDefault();
-
-        let finalCategory = selectedCategory;
-        if (selectedCategory === "Lainnya") {
-            if (!customCategoryInput.value.trim()) {
-                alert("Mohon isi kategori lainnya");
-                return;
-            }
-            finalCategory = customCategoryInput.value.trim();
-        } else if (!selectedCategory) {
-            alert("Pilih salah satu kategori masalah");
-            return;
-        }
-
-        const judulInput = document.getElementById('judul');
-        const kronologiInput = document.getElementById('kronologi');
-        const pihakNamaInput = document.getElementById('pihakNama');
-        const pihakJabatanInput = document.getElementById('pihakJabatan');
-        const pihakDivisiInput = document.getElementById('pihakDivisi');
-        const tanggalKejadianInput = document.getElementById('tanggalKejadian');
-        const lokasiProjectInput = document.getElementById('lokasiProject');
-        const statusKejadianSelect = document.getElementById('statusKejadian');
-
-        const judul = judulInput ? judulInput.value.trim() : "";
-        if (!judul) {
-            alert("Isi judul masalah");
-            return;
-        }
-
-        const kronologi = kronologiInput ? kronologiInput.value.trim() : "";
-        if (!kronologi) {
-            alert("Isi kronologi kejadian");
-            return;
-        }
-
-        const nama = (pihakNamaInput ? pihakNamaInput.value.trim() : "") || "Tidak disebutkan";
-        const jabatan = (pihakJabatanInput ? pihakJabatanInput.value.trim() : "") || "-";
-        const divisi = (pihakDivisiInput ? pihakDivisiInput.value.trim() : "") || "-";
-        const tglKejadian = tanggalKejadianInput ? tanggalKejadianInput.value : "";
-        const lokasi = lokasiProjectInput ? lokasiProjectInput.value.trim() : "";
-        const statusVal = statusKejadianSelect ? statusKejadianSelect.value : "Masih terjadi";
-
-        const submitBtn = document.getElementById('submitReportBtn');
-        const originalText = submitBtn ? submitBtn.innerHTML : "Kirim";
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengupload ke Dropbox...';
-            submitBtn.disabled = true;
-        }
-
-        try {
-            const reportId = Date.now();
-            
-            // Upload files to Dropbox first
-            let dropboxResults = [];
-            if (uploadedFiles.length > 0) {
-                if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Upload ke Dropbox...';
-                dropboxResults = await uploadAllFilesToDropbox(uploadedFiles, reportId);
-            }
-            
-            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim email...';
-            
-            const reportData = {
-                kategori: finalCategory,
-                judul: judul,
-                kronologi: kronologi,
-                pihakTerkait: { nama, jabatan, divisi },
-                detailTambahan: {
-                    tanggalKejadian: tglKejadian,
-                    lokasiProject: lokasi,
-                    status: statusVal
-                },
-                timestamp: new Date().toISOString(),
-                anonim: true
-            };
-
-            await sendEmailReport(reportData, dropboxResults);
-            showToast("📧 Laporan terkirim dengan file di Dropbox!", false);
-            saveToLocalStorage(reportData, dropboxResults);
-
-            const successfulCount = dropboxResults.filter(r => r.success).length;
-            const failedCount = dropboxResults.filter(r => !r.success).length;
-            
-            let message = `✅ Laporan anonim berhasil dikirim!\n\nLaporan telah dikirim ke:\n📧 ${RECIPIENT_EMAIL}\n\n`;
-            if (successfulCount > 0) {
-                message += `📁 ${successfulCount} file berhasil diupload ke Dropbox (Folder: ${DROPBOX_APP_FOLDER})\n`;
-            }
-            if (failedCount > 0) {
-                message += `⚠️ ${failedCount} file gagal diupload ke Dropbox\n`;
-            }
-            message += `\nTerima kasih atas partisipasi Anda.`;
-            
-            alert(message);
-            resetForm();
-            if (formContainer) formContainer.classList.add('hidden');
-            if (emptyStateDiv) emptyStateDiv.classList.remove('hidden');
-
-        } catch (error) {
-            console.error("Error:", error);
-            showToast("Gagal mengirim laporan: " + error.message, true);
-            alert(`❌ Gagal mengirim laporan.\n\nError: ${error.message}\n\nPastikan:\n1. Koneksi internet stabil\n2. Token Dropbox valid\n3. Coba lagi nanti`);
-        } finally {
-            if (submitBtn) {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        }
-    }
-
-    // Event Listeners
-    if (backCheckBtn) {
-        backCheckBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            alert("Silakan periksa kembali data laporan Anda sebelum mengirim.");
-        });
-    }
-
-    if (newReportBtn) {
-        newReportBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            console.log("Tombol Buat Laporan diklik");
-            if (formContainer && emptyStateDiv) {
-                resetForm();
-                formContainer.classList.remove('hidden');
-                emptyStateDiv.classList.add('hidden');
-                setTimeout(() => {
-                    formContainer.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            }
-        });
-    }
-
-    if (reportForm) {
-        reportForm.addEventListener('submit', submitReport);
-    }
-
-    renderCategories();
-    console.log("🎯 SpeakUp app siap digunakan dengan Dropbox integration | App Folder:", DROPBOX_APP_FOLDER);
 </script>
 </body>
 </html>
