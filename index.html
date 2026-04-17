@@ -44,6 +44,7 @@
         /* ========== HERO HEADER YANG BESAR & MEWAH ========== */
         .hero-header {
             position: relative;
+            margin-top: 2.5rem;
             margin-bottom: 2.5rem;
             border-radius: 48px;
             overflow: hidden;
@@ -62,9 +63,9 @@
             padding: 3rem 2.5rem;
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            justify-content: center;
             gap: 2rem;
             backdrop-filter: blur(2px);
         }
@@ -83,9 +84,30 @@
             pointer-events: none;
         }
 
+        /* Logo sekarang di bagian atas (sejajar dengan hero content) tetapi kita buat di atas teks utama */
+        .logo-hero {
+            flex-shrink: 0;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-hero img {
+            height: 260px;
+            width: auto;
+            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.25));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-hero img:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
         .hero-content {
             flex: 1;
             z-index: 2;
+            text-align: center;
+            width: 100%;
         }
 
         .hero-badge {
@@ -103,7 +125,7 @@
         }
 
         .hero-title {
-            font-size: 3.2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: white;
             line-height: 1.2;
@@ -122,15 +144,16 @@
         .hero-desc {
             color: rgba(255,255,255,0.9);
             font-size: 1rem;
-            max-width: 500px;
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
             line-height: 1.5;
-            margin-bottom: 1.5rem;
         }
 
         .hero-stats {
             display: flex;
             gap: 1.8rem;
             margin-top: 1rem;
+            justify-content: center;
         }
 
         .stat-item {
@@ -147,22 +170,6 @@
             font-weight: 800;
             font-size: 1.4rem;
             color: #fbbf24;
-        }
-
-        .logo-hero {
-            flex-shrink: 0;
-            z-index: 2;
-        }
-
-        .logo-hero img {
-            height: 130px;
-            width: auto;
-            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.25));
-            transition: transform 0.3s ease;
-        }
-
-        .logo-hero img:hover {
-            transform: scale(1.05) rotate(2deg);
         }
 
         /* CARD modern dengan efek glass */
@@ -430,7 +437,7 @@
             .hero-bg { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
             .hero-title { font-size: 2.2rem; }
             .hero-stats { justify-content: center; }
-            .logo-hero img { height: 90px; }
+            .logo-hero img { height: 80px; }
             .card { padding: 1.2rem; }
             .action-buttons { flex-direction: column; }
             .action-buttons button { width: 100%; justify-content: center; }
@@ -439,9 +446,14 @@
 </head>
 <body>
 <div class="container">
-    <!-- HEADER BESAR SEPERTI SPANDUK UTAMA -->
+    <!-- HEADER BESAR SEPERTI SPANDUK UTAMA - Logo dipindahkan ke atas hero content -->
     <div class="hero-header">
         <div class="hero-bg">
+            <!-- Logo sekarang berada di bagian paling atas dari hero-bg -->
+            <div class="logo-hero">
+                <img src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo Utama">
+            </div>
+            <!-- Kemudian hero content di bawah logo -->
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-shield-heart"></i> 100% ANONIM & TERPERCAYA
@@ -457,9 +469,6 @@
                     <div class="stat-item"><span class="stat-number">100%</span> <span>Rahasia</span></div>
                     <div class="stat-item"><span class="stat-number">24/7</span> <span>Akses Aman</span></div>
                 </div>
-            </div>
-            <div class="logo-hero">
-                <img src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo Utama">
             </div>
         </div>
     </div>
