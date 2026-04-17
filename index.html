@@ -50,6 +50,7 @@
             overflow: hidden;
             box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .hero-header:hover {
@@ -57,7 +58,6 @@
             box-shadow: 0 35px 55px -15px rgba(0, 0, 0, 0.4);
         }
 
-        /* Background glassmorphism + gradient overlay */
         .hero-bg {
             background: linear-gradient(135deg, #0b2b44 0%, #1a4a6f 40%, #2563eb 100%);
             padding: 3rem 2.5rem;
@@ -84,12 +84,12 @@
             pointer-events: none;
         }
 
-        /* Logo sekarang di bagian atas (sejajar dengan hero content) tetapi kita buat di atas teks utama */
         .logo-hero {
             flex-shrink: 0;
             z-index: 2;
             text-align: center;
             margin-bottom: 0.5rem;
+            pointer-events: auto;
         }
 
         .logo-hero img {
@@ -172,7 +172,7 @@
             color: #fbbf24;
         }
 
-        /* CARD modern dengan efek glass */
+        /* CARD modern dengan efek glass - AWALNYA TERSEMBUNYI */
         .card {
             background: rgba(255, 255, 255, 0.97);
             border-radius: 40px;
@@ -181,6 +181,24 @@
             transition: all 0.3s;
             border: 1px solid rgba(255,255,255,0.6);
             backdrop-filter: blur(2px);
+            margin-top: 1rem;
+            display: none; /* Awalnya tersembunyi */
+            animation: cardFadeInUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .card.visible {
+            display: block;
+        }
+
+        @keyframes cardFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .greeting {
@@ -433,6 +451,16 @@
             transition: width 0.3s;
         }
 
+        .hero-click-effect {
+            animation: heroFlash 0.3s ease;
+        }
+
+        @keyframes heroFlash {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(0.99); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
         @media (max-width: 760px) {
             .hero-bg { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
             .hero-title { font-size: 2.2rem; }
@@ -446,16 +474,11 @@
 </head>
 <body>
 <div class="container">
-    <!-- HEADER BESAR SEPERTI SPANDUK UTAMA - Logo dipindahkan ke atas hero content -->
-    <div class="hero-header">
+    <!-- HERO HEADER MEWAH - Satu-satunya yang terlihat di awal -->
+    <div class="hero-header" id="heroHeader">
         <div class="hero-bg">
-            <!-- Logo sekarang berada di bagian paling atas dari hero-bg -->
             <div class="logo-hero">
                 <img src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo Utama">
-            </div>
-            <!-- Kemudian hero content di bawah logo -->
-            <div class="hero-content">
-                <div class="hero-badge">
                 </div>
                 <div class="hero-title">
                     Suara <span>Anonim</span><br>Untuk Perubahan Lebih Baik
@@ -472,7 +495,8 @@
         </div>
     </div>
 
-    <div class="card">
+    <!-- CARD LAPORAN - AWALNYA TERSEMBUNYI, AKAN MUNCUL SAAT LOGO DI KLIK -->
+    <div class="card" id="reportCard">
         <div class="greeting">
             <p><i class="fas fa-comment-dots" style="color:#2563eb; font-size: 1.2rem;"></i> <strong>Ada hal penting yang ingin disampaikan?</strong> Laporkan secara profesional & anonim</p>
             <button id="newReportBtn" class="btn-primary"><i class="fas fa-pen-fancy"></i> + Buat Laporan Baru</button>
@@ -574,7 +598,9 @@
     let selectedCategory = "";
     let uploadedFiles = [];
 
-    // DOM
+    // DOM Elements
+    const heroHeader = document.getElementById('heroHeader');
+    const reportCard = document.getElementById('reportCard');
     const newReportBtn = document.getElementById('newReportBtn');
     const formContainer = document.getElementById('formContainer');
     const emptyStateDiv = document.getElementById('emptyState');
@@ -591,7 +617,59 @@
 
     const kategoriList = ["HR & Hubungan Kerja", "Kompensasi & Benefit", "Operasional & Proses Kerja", "K3 / Safety", "Administrasi & Dokumen", "Fasilitas & Infrastruktur", "Etika & Perilaku", "Manajemen & Kebijakan", "Pelanggaran / Fraud", "Lainnya"];
 
-    // Dropbox upload functions
+    // Fungsi untuk menampilkan card dan membuka form laporan baru
+    function revealAndOpenForm() {
+        // Jika card belum terlihat, tampilkan dengan animasi
+        if (!reportCard.classList.contains('visible')) {
+            reportCard.classList.add('visible');
+            // Scroll sedikit agar card terlihat setelah muncul
+            setTimeout(() => {
+                reportCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        // Reset form dan pastikan form dalam keadaan siap (kosong)
+        resetFormFields();
+        // Tampilkan form container, sembunyikan empty state
+        formContainer.classList.remove('hidden');
+        emptyStateDiv.classList.add('hidden');
+        // Animasi hero feedback
+        if (heroHeader) {
+            heroHeader.classList.add('hero-click-effect');
+            setTimeout(() => heroHeader.classList.remove('hero-click-effect'), 300);
+        }
+    }
+
+    // Fungsi untuk reset form
+    function resetFormFields() {
+        document.getElementById('judul').value = "";
+        document.getElementById('kronologi').value = "";
+        document.getElementById('pihakNama').value = "";
+        document.getElementById('pihakJabatan').value = "";
+        document.getElementById('pihakDivisi').value = "";
+        document.getElementById('tanggalKejadian').value = "";
+        document.getElementById('lokasiProject').value = "";
+        document.getElementById('statusKejadian').value = "Masih terjadi";
+        selectedCategory = "";
+        customCategoryDiv.classList.add('hidden');
+        customCategoryInput.value = "";
+        uploadedFiles = [];
+        updateFilePreview();
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    // Event: Klik pada Hero (termasuk logo) akan memunculkan card dan membuka form laporan
+    heroHeader.addEventListener('click', (e) => {
+        e.stopPropagation();
+        revealAndOpenForm();
+    });
+
+    // Tombol "Buat Laporan Baru" di dalam greeting juga memicu hal yang sama
+    newReportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        revealAndOpenForm();
+    });
+
+    // Dropbox & file handlers
     async function uploadToDropbox(file, reportId) {
         const timestamp = Date.now();
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -708,23 +786,6 @@
         localStorage.setItem('speakup_reports', JSON.stringify(reports));
     }
 
-    function resetFormFields() {
-        document.getElementById('judul').value = "";
-        document.getElementById('kronologi').value = "";
-        document.getElementById('pihakNama').value = "";
-        document.getElementById('pihakJabatan').value = "";
-        document.getElementById('pihakDivisi').value = "";
-        document.getElementById('tanggalKejadian').value = "";
-        document.getElementById('lokasiProject').value = "";
-        document.getElementById('statusKejadian').value = "Masih terjadi";
-        selectedCategory = "";
-        customCategoryDiv.classList.add('hidden');
-        customCategoryInput.value = "";
-        uploadedFiles = [];
-        updateFilePreview();
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    }
-
     async function submitReportHandler(e) {
         e.preventDefault();
         let finalCat = selectedCategory;
@@ -755,8 +816,11 @@
             showToast("Laporan anonim berhasil dikirim! Terima kasih telah bersuara.", false);
             alert(`✅ Laporan terkirim ke HR & tim internal`);
             resetFormFields();
-            formContainer.classList.add('hidden');
-            emptyStateDiv.classList.remove('hidden');
+            // Setelah kirim, form kosong namun tetap tampil (tidak kembali ke hidden)
+            formContainer.classList.remove('hidden');
+            emptyStateDiv.classList.add('hidden');
+            // scroll sedikit ke atas card
+            reportCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } catch(err) {
             console.error(err);
             showToast("Gagal mengirim laporan: " + err.message, true);
@@ -766,12 +830,6 @@
         }
     }
 
-    newReportBtn.addEventListener('click', () => {
-        resetFormFields();
-        formContainer.classList.remove('hidden');
-        emptyStateDiv.classList.add('hidden');
-        formContainer.scrollIntoView({ behavior: 'smooth' });
-    });
     backCheckBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     reportForm.addEventListener('submit', submitReportHandler);
     renderCategories();
@@ -784,6 +842,10 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
     }
+
+    // Inisialisasi: Card tidak terlihat, form container juga tidak terlihat, empty state juga tidak perlu karena card tersembunyi total.
+    // Namun kita set agar saat card pertama kali muncul, empty state atau form siap.
+    // Saat ini card dalam keadaan hidden, nanti saat diklik baru muncul.
 </script>
 </body>
 </html>
