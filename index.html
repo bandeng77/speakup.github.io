@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpeakUp | Suara Anonim & Rahasia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <!-- HERO HEADER MEWAH - Tanpa badge -->
+    <div class="hero-header" id="heroHeader">
+        <div class="hero-bg">
+            <div class="logo-hero">
+                <img src="https://i.imgur.com/7zE7RAF.png" alt="SpeakUp Logo Utama">
+            </div>
+            <div class="hero-content">
+                <div class="hero-title">
+                    Suara <span>Anonim</span><br>Untuk Perubahan Lebih Baik
+                </div>
+                <div class="hero-desc">
+                    SpeakUp adalah wadah rahasia bagi karyawan untuk melaporkan kendala, 
+                    pelanggaran, atau masukan tanpa rasa takut. Semua data dienkripsi.
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item"><span class="stat-number">100%</span> <span>Rahasia</span></div>
+                    <div class="stat-item"><span class="stat-number">24/7</span> <span>Akses Aman</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARD LAPORAN - AWALNYA TERSEMBUNYI, AKAN MUNCUL SAAT LOGO DI KLIK -->
+    <div class="card" id="reportCard">
+        <div class="greeting">
+            <p><i class="fas fa-comment-dots" style="color:#2563eb; font-size: 1.2rem;"></i> <strong>Ada hal penting yang ingin disampaikan?</strong> Laporkan secara profesional & anonim</p>
+            <button id="newReportBtn" class="btn-primary"><i class="fas fa-pen-fancy"></i> + Buat Laporan Baru</button>
+        </div>
+
+        <div id="formContainer" class="hidden">
+            <form id="reportForm">
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">1</span> Kategori Masalah <span id="infoCatIcon" class="info-icon"><i class="fas fa-question"></i></span></div>
+                    <div id="categoryGroup" class="category-grid"></div>
+                    <div id="customCategoryDiv" class="hidden" style="margin-top: 12px;">
+                        <input type="text" id="customCategoryInput" placeholder="Masukkan kategori lain...">
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">2</span> Judul Masalah</div>
+                    <input type="text" id="judul" placeholder="Contoh: Keterlambatan respons dari tim operasional" maxlength="120">
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">3</span> Kronologi Kejadian</div>
+                    <textarea id="kronologi" rows="4" placeholder="Ceritakan secara kronologis (waktu, tempat, dampak, dan siapa saja yang terlibat)"></textarea>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">4</span> Pihak Terkait (Opsional)</div>
+                    <div class="row-2col">
+                        <div><input type="text" id="pihakNama" placeholder="Nama"></div>
+                        <div><input type="text" id="pihakJabatan" placeholder="Jabatan"></div>
+                        <div><input type="text" id="pihakDivisi" placeholder="Divisi"></div>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">5</span> Detail Tambahan</div>
+                    <div class="row-2col">
+                        <div><input type="date" id="tanggalKejadian"></div>
+                        <div><input type="text" id="lokasiProject" placeholder="Lokasi / Project"></div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <label style="font-weight: 500;">Status Kejadian :</label>
+                        <select id="statusKejadian">
+                            <option value="Masih terjadi">Masih terjadi</option>
+                            <option value="Sudah selesai">Sudah selesai</option>
+                            <option value="Terjadi Berulang">Terjadi Berulang</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">6</span> Bukti Pendukung</div>
+                    <div id="dropzone" class="file-zone">
+                        <i class="fas fa-cloud-upload-alt fa-2x" style="color:#2563eb;"></i>
+                        <p><strong>Klik atau drag & drop file</strong> (Foto, PDF, Screenshot, Video)</p>
+                        <p style="font-size: 0.7rem;">Maks 5MB per file</p>
+                        <input type="file" id="fileInput" multiple accept="image/*,video/*,application/pdf,.txt,.doc,.docx" style="display: none;">
+                    </div>
+                    <div id="filePreviewList" class="preview-files"></div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title"><span class="step-badge">7</span> Konfirmasi & Kirim</div>
+                    <div class="confirm-box">
+                        <i class="fas fa-shield-alt" style="margin-right: 10px; color:#2563eb;"></i> 
+                        <strong>Laporan ini bersifat rahasia & anonim.</strong> Pastikan informasi yang disampaikan akurat.<br>
+                        Klik Kirim Laporan, maka data akan langsung diproses tim internal.
+                    </div>
+                    <div class="action-buttons">
+                        <button type="button" id="backCheckBtn" class="btn-outline"><i class="fas fa-undo-alt"></i> Periksa Ulang</button>
+                        <button type="submit" id="submitReportBtn" class="btn-primary"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="emptyState" style="text-align: center; padding: 3rem 1.5rem;">
+            <i class="fas fa-folder-open" style="font-size: 3.5rem; color:#a0bfec;"></i>
+            <p style="margin-top: 1.2rem; color: #2c3e66;">Belum ada laporan yang dibuat. Klik tombol di atas untuk memulai suara anonim Anda.</p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
