@@ -17,7 +17,7 @@ const SMB_CONFIG = {
 // ============ MODE TESTING ============
 // SET ke true untuk skip upload ke n8n (testing email & form saja)
 // SET ke false untuk upload real ke n8n
-const TESTING_MODE = true;  // <-- GANTI ke false jika n8n sudah siap
+const TESTING_MODE = false;  // <-- GANTI ke false jika n8n sudah siap
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
