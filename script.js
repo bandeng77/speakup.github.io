@@ -10,7 +10,7 @@ const N8N_UPLOAD_URL = "https://n8n.genetek.co.id/webhook/upload";
 // Konfigurasi SMB (akan digunakan oleh n8n webhook)
 const SMB_CONFIG = {
   server: "192.168.104.33",
-  share: "Data-4TB",
+  share: "speakup",
   path: "/speakup"
 };
 
