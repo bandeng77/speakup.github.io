@@ -104,30 +104,55 @@ async function uploadFileToN8N(file, reportId) {
     formData.append('reportId', reportId);
     formData.append('originalName', file.name);
     
-    // Anda bisa menambahkan parameter tambahan jika diperlukan
+    // Kirim konfigurasi SMB ke n8n
     formData.append('smbServer', SMB_CONFIG.server);
     formData.append('smbShare', SMB_CONFIG.share);
+    formData.append('smbPath', SMB_CONFIG.path);
     
     try {
         const response = await fetch(N8N_UPLOAD_URL, {
             method: 'POST',
             body: formData,
-            // Jangan set Content-Type, browser akan otomatis set dengan boundary
         });
         
+        // Baca response sebagai text terlebih dahulu
+        const responseText = await response.text();
+        console.log('Response dari n8n:', responseText);
+        
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Upload gagal (${response.status}): ${errorText}`);
+            throw new Error(`HTTP ${response.status}: ${responseText || 'No response body'}`);
         }
         
-        const result = await response.json();
+        // Jika response kosong, anggap sukses
+        if (!responseText || responseText.trim() === '') {
+            return {
+                success: true,
+                name: file.name,
+                size: file.size,
+                path: `//${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
+                message: 'Upload sukses (response kosong)'
+            };
+        }
+        
+        // Coba parse JSON jika ada
+        let result = {};
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            // Jika bukan JSON, tetap anggap sukses
+            console.warn('Response bukan JSON:', responseText);
+            result = { message: responseText };
+        }
+        
         return {
             success: true,
             name: file.name,
             size: file.size,
-            path: result.filePath || result.path || `Uploaded to TrueNAS`,
-            url: result.url || null
+            path: result.filePath || result.path || `//${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
+            url: result.url || null,
+            rawResponse: result
         };
+        
     } catch (error) {
         console.error('Upload error:', error);
         return {
@@ -147,18 +172,18 @@ async function uploadAllFiles(files, reportId) {
     let results = [];
     for (let i = 0; i < files.length; i++) {
         if (uploadProgressBar) {
-            const percent = (i / files.length) * 100;
+            const percent = ((i + 1) / files.length) * 100;
             uploadProgressBar.style.width = `${percent}%`;
         }
         
-        showToast(`📤 Mengupload ${files[i].name}...`, false);
+        showToast(`📤 Upload ${files[i].name}...`, false);
         const result = await uploadFileToN8N(files[i].file, reportId);
         results.push(result);
         
         if (result.success) {
-            showToast(`✅ ${result.name} berhasil diupload`, false);
+            showToast(`✅ ${result.name} berhasil`, false);
         } else {
-            showToast(`❌ Gagal upload ${result.name}: ${result.error}`, true);
+            showToast(`❌ Gagal: ${result.name} - ${result.error}`, true);
         }
     }
     
