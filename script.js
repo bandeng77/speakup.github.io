@@ -8,14 +8,16 @@ const RECIPIENT_EMAIL = "contoh@genetek.co.id";
 const N8N_UPLOAD_URL = "https://n8n.genetek.co.id/webhook/upload";
 
 // Konfigurasi SMB (akan digunakan oleh n8n webhook)
-// Info ini hanya dokumentasi - sebenarnya konfigurasi SMB ada di n8n
 const SMB_CONFIG = {
-  // CATATAN: Konfigurasi ini harus diatur di n8n workflow, bukan di frontend
-  // Tapi anda bisa mengirimkan parameter tambahan jika diperlukan
-  server: "192.168.104.33",  // atau IP TrueNAS
+  server: "192.168.104.33",
   share: "Data-4TB",
   path: "/speakup"
 };
+
+// ============ MODE TESTING ============
+// SET ke true untuk skip upload ke n8n (testing email & form saja)
+// SET ke false untuk upload real ke n8n
+const TESTING_MODE = true;  // <-- GANTI ke false jika n8n sudah siap
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
@@ -36,16 +38,19 @@ const dropzone = document.getElementById('dropzone');
 const filePreviewList = document.getElementById('filePreviewList');
 const reportForm = document.getElementById('reportForm');
 const backCheckBtn = document.getElementById('backCheckBtn');
-const uploadProgressDiv = document.getElementById('uploadProgress');
-const uploadProgressBar = document.getElementById('uploadProgressBar');
 
 // Buat elemen progress bar jika belum ada
-if (!uploadProgressDiv) {
+let uploadProgressDiv = document.getElementById('uploadProgress');
+let uploadProgressBar = document.getElementById('uploadProgressBar');
+
+if (!uploadProgressDiv && dropzone && dropzone.parentNode) {
   const progressDiv = document.createElement('div');
   progressDiv.id = 'uploadProgress';
   progressDiv.className = 'upload-progress hidden';
   progressDiv.innerHTML = '<div id="uploadProgressBar" class="upload-progress-bar"></div>';
   dropzone.parentNode.appendChild(progressDiv);
+  uploadProgressDiv = document.getElementById('uploadProgress');
+  uploadProgressBar = document.getElementById('uploadProgressBar');
 }
 
 const kategoriList = ["HR & Hubungan Kerja", "Kompensasi & Benefit", "Operasional & Proses Kerja", "K3 / Safety", "Administrasi & Dokumen", "Fasilitas & Infrastruktur", "Etika & Perilaku", "Manajemen & Kebijakan", "Pelanggaran / Fraud", "Lainnya"];
@@ -69,42 +74,66 @@ function revealAndOpenForm() {
 
 // Fungsi untuk reset form
 function resetFormFields() {
-    document.getElementById('judul').value = "";
-    document.getElementById('kronologi').value = "";
-    document.getElementById('pihakNama').value = "";
-    document.getElementById('pihakJabatan').value = "";
-    document.getElementById('pihakDivisi').value = "";
-    document.getElementById('tanggalKejadian').value = "";
-    document.getElementById('lokasiProject').value = "";
-    document.getElementById('statusKejadian').value = "Masih terjadi";
+    const judulInput = document.getElementById('judul');
+    const kronologiInput = document.getElementById('kronologi');
+    const pihakNama = document.getElementById('pihakNama');
+    const pihakJabatan = document.getElementById('pihakJabatan');
+    const pihakDivisi = document.getElementById('pihakDivisi');
+    const tanggalKejadian = document.getElementById('tanggalKejadian');
+    const lokasiProject = document.getElementById('lokasiProject');
+    const statusKejadian = document.getElementById('statusKejadian');
+    
+    if (judulInput) judulInput.value = "";
+    if (kronologiInput) kronologiInput.value = "";
+    if (pihakNama) pihakNama.value = "";
+    if (pihakJabatan) pihakJabatan.value = "";
+    if (pihakDivisi) pihakDivisi.value = "";
+    if (tanggalKejadian) tanggalKejadian.value = "";
+    if (lokasiProject) lokasiProject.value = "";
+    if (statusKejadian) statusKejadian.value = "Masih terjadi";
+    
     selectedCategory = "";
-    customCategoryDiv.classList.add('hidden');
-    customCategoryInput.value = "";
+    if (customCategoryDiv) customCategoryDiv.classList.add('hidden');
+    if (customCategoryInput) customCategoryInput.value = "";
     uploadedFiles = [];
     updateFilePreview();
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
 }
 
 // Event: Klik pada Hero (termasuk logo) akan memunculkan card dan membuka form laporan
-heroHeader.addEventListener('click', (e) => {
-    e.stopPropagation();
-    revealAndOpenForm();
-});
+if (heroHeader) {
+    heroHeader.addEventListener('click', (e) => {
+        e.stopPropagation();
+        revealAndOpenForm();
+    });
+}
 
-// Tombol "Buat Laporan Baru" di dalam greeting juga memicu hal yang sama
-newReportBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    revealAndOpenForm();
-});
+// Tombol "Buat Laporan Baru"
+if (newReportBtn) {
+    newReportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        revealAndOpenForm();
+    });
+}
 
-// ========== FUNGSI UPLOAD KE N8N WEBHOOK ==========
+// ========== FUNGSI UPLOAD KE N8N WEBHOOK (dengan handle response kosong) ==========
 async function uploadFileToN8N(file, reportId) {
+    // Jika mode testing, skip upload real
+    if (TESTING_MODE) {
+        console.log(`[TESTING] Simulasi upload: ${file.name}`);
+        return {
+            success: true,
+            name: file.name,
+            size: file.size,
+            path: `[TESTING] //${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
+            message: 'Mode testing - file tidak benar-benar diupload'
+        };
+    }
+    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('reportId', reportId);
     formData.append('originalName', file.name);
-    
-    // Kirim konfigurasi SMB ke n8n
     formData.append('smbServer', SMB_CONFIG.server);
     formData.append('smbShare', SMB_CONFIG.share);
     formData.append('smbPath', SMB_CONFIG.path);
@@ -115,33 +144,32 @@ async function uploadFileToN8N(file, reportId) {
             body: formData,
         });
         
-        // Baca response sebagai text terlebih dahulu
+        // Baca response sebagai text terlebih dahulu (jangan langsung json)
         const responseText = await response.text();
-        console.log('Response dari n8n:', responseText);
+        console.log('Response dari n8n (raw):', responseText);
         
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${responseText || 'No response body'}`);
+            throw new Error(`HTTP ${response.status}: ${responseText || 'No response'}`);
         }
         
-        // Jika response kosong, anggap sukses
+        // Jika response kosong, tetap anggap sukses (file mungkin tetap terupload)
         if (!responseText || responseText.trim() === '') {
             return {
                 success: true,
                 name: file.name,
                 size: file.size,
                 path: `//${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
-                message: 'Upload sukses (response kosong)'
+                warning: 'Response dari server kosong, tapi upload mungkin berhasil'
             };
         }
         
-        // Coba parse JSON jika ada
+        // Coba parse JSON jika ada konten
         let result = {};
         try {
             result = JSON.parse(responseText);
-        } catch (e) {
-            // Jika bukan JSON, tetap anggap sukses
+        } catch (parseError) {
             console.warn('Response bukan JSON:', responseText);
-            result = { message: responseText };
+            result = { rawResponse: responseText };
         }
         
         return {
@@ -164,9 +192,6 @@ async function uploadFileToN8N(file, reportId) {
 }
 
 async function uploadAllFiles(files, reportId) {
-    const uploadProgressDiv = document.getElementById('uploadProgress');
-    const uploadProgressBar = document.getElementById('uploadProgressBar');
-    
     if (uploadProgressDiv) uploadProgressDiv.classList.remove('hidden');
     
     let results = [];
@@ -176,12 +201,12 @@ async function uploadAllFiles(files, reportId) {
             uploadProgressBar.style.width = `${percent}%`;
         }
         
-        showToast(`📤 Upload ${files[i].name}...`, false);
+        showToast(`📤 ${TESTING_MODE ? '[TEST] ' : ''}Upload ${files[i].name}...`, false);
         const result = await uploadFileToN8N(files[i].file, reportId);
         results.push(result);
         
         if (result.success) {
-            showToast(`✅ ${result.name} berhasil`, false);
+            showToast(`✅ ${result.name} ${TESTING_MODE ? '(simulasi)' : 'berhasil'}`, false);
         } else {
             showToast(`❌ Gagal: ${result.name} - ${result.error}`, true);
         }
@@ -198,7 +223,7 @@ async function uploadAllFiles(files, reportId) {
 
 // ========== FILE HANDLERS ==========
 function handleFiles(files) {
-    if (!files.length) return;
+    if (!files || !files.length) return;
     
     for (let f of files) {
         if (f.size > 5 * 1024 * 1024) {
@@ -279,7 +304,7 @@ async function sendEmail(reportData, uploadedFilesInfo) {
         const successFiles = uploadedFilesInfo.filter(f => f.success);
         if (successFiles.length) {
             lampiranText = successFiles.map(f => 
-                `• ${f.name} (${(f.size / 1024).toFixed(1)}KB)\n  Lokasi TrueNAS: ${f.path || 'Tersimpan'}`
+                `• ${f.name} (${(f.size / 1024).toFixed(1)}KB)\n  Lokasi: ${f.path || 'Tersimpan'}`
             ).join("\n\n");
         } else {
             lampiranText = "Upload file gagal, silakan lampirkan manual";
@@ -300,7 +325,7 @@ async function sendEmail(reportData, uploadedFilesInfo) {
         status: reportData.detailTambahan.status,
         lampiran: lampiranText,
         tanggal_laporan: new Date().toLocaleString('id-ID'),
-        message: `LAPORAN SPEAKUP\n\nKategori: ${reportData.kategori}\nJudul: ${reportData.judul}\nKronologi: ${reportData.kronologi}\n\nFile yang tersimpan di TrueNAS:\n${lampiranText}`
+        message: `LAPORAN SPEAKUP\n\nKategori: ${reportData.kategori}\nJudul: ${reportData.judul}\nKronologi: ${reportData.kronologi}\n\nFile yang tersimpan:\n${lampiranText}`
     };
     
     return await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
@@ -346,7 +371,7 @@ async function submitReportHandler(e) {
         
         // Upload file ke TrueNAS via n8n webhook
         if (uploadedFiles.length > 0) {
-            showToast(`📤 Mengupload ${uploadedFiles.length} file ke TrueNAS...`, false);
+            showToast(`📤 ${TESTING_MODE ? '[TESTING MODE] ' : ''}Mengupload ${uploadedFiles.length} file...`, false);
             uploadResults = await uploadAllFiles(uploadedFiles, reportId);
         }
         
@@ -377,10 +402,10 @@ async function submitReportHandler(e) {
         
         let successMessage = `✅ Laporan terkirim ke HR & tim internal\n`;
         if (successCount > 0) {
-            successMessage += `📁 ${successCount} file berhasil disimpan ke TrueNAS\n`;
+            successMessage += `📁 ${successCount} file berhasil ${TESTING_MODE ? '(simulasi) ' : ''}disimpan\n`;
         }
         if (failCount > 0) {
-            successMessage += `⚠️ ${failCount} file gagal diupload, silakan lampirkan manual`;
+            successMessage += `⚠️ ${failCount} file gagal diupload`;
         }
         
         alert(successMessage);
@@ -418,12 +443,4 @@ function showToast(msg, isErr) {
     toast.innerHTML = `<i class="fas ${isErr ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 4000);
-}
-
-// Tambahkan elemen progress bar ke HTML jika belum ada
-if (!document.getElementById('uploadProgress')) {
-    const progressHtml = `<div id="uploadProgress" class="upload-progress hidden"><div id="uploadProgressBar" class="upload-progress-bar"></div></div>`;
-    if (dropzone && dropzone.parentNode) {
-        dropzone.parentNode.insertAdjacentHTML('beforeend', progressHtml);
-    }
 }
