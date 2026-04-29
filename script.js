@@ -4,20 +4,8 @@ const EMAILJS_SERVICE_ID = "carbonio_mail";
 const EMAILJS_TEMPLATE_ID = "template_08n414a";
 const RECIPIENT_EMAIL = "contoh@genetek.co.id";
 
-// Konfigurasi n8n upload webhook
-const N8N_UPLOAD_URL = "https://n8n.genetek.co.id/webhook/upload";
-
-// Konfigurasi SMB (akan digunakan oleh n8n webhook)
-const SMB_CONFIG = {
-  server: "192.168.104.33",
-  share: "speakup",
-  path: "/speakup"
-};
-
-// ============ MODE TESTING ============
-// SET ke true untuk skip upload ke n8n (testing email & form saja)
-// SET ke false untuk upload real ke n8n
-const TESTING_MODE = false;  // <-- GANTI ke false jika n8n sudah siap
+// Konfigurasi Backend API upload
+const API_UPLOAD_URL = "http://192.168.104.37:3000/upload";
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
@@ -116,54 +104,27 @@ if (newReportBtn) {
     });
 }
 
-// ========== FUNGSI UPLOAD KE N8N WEBHOOK (dengan handle response kosong) ==========
-async function uploadFileToN8N(file, reportId) {
-    // Jika mode testing, skip upload real
-    if (TESTING_MODE) {
-        console.log(`[TESTING] Simulasi upload: ${file.name}`);
-        return {
-            success: true,
-            name: file.name,
-            size: file.size,
-            path: `[TESTING] //${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
-            message: 'Mode testing - file tidak benar-benar diupload'
-        };
-    }
-    
+// ========== FUNGSI UPLOAD KE BACKEND API ==========
+async function uploadFileToAPI(file, reportId) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('reportId', reportId);
     formData.append('originalName', file.name);
-    formData.append('smbServer', SMB_CONFIG.server);
-    formData.append('smbShare', SMB_CONFIG.share);
-    formData.append('smbPath', SMB_CONFIG.path);
     
     try {
-        const response = await fetch(N8N_UPLOAD_URL, {
+        const response = await fetch(API_UPLOAD_URL, {
             method: 'POST',
             body: formData,
         });
         
-        // Baca response sebagai text terlebih dahulu (jangan langsung json)
         const responseText = await response.text();
-        console.log('Response dari n8n (raw):', responseText);
+        console.log('Response dari API:', responseText);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${responseText || 'No response'}`);
         }
         
-        // Jika response kosong, tetap anggap sukses (file mungkin tetap terupload)
-        if (!responseText || responseText.trim() === '') {
-            return {
-                success: true,
-                name: file.name,
-                size: file.size,
-                path: `//${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
-                warning: 'Response dari server kosong, tapi upload mungkin berhasil'
-            };
-        }
-        
-        // Coba parse JSON jika ada konten
+        // Coba parse JSON
         let result = {};
         try {
             result = JSON.parse(responseText);
@@ -176,7 +137,7 @@ async function uploadFileToN8N(file, reportId) {
             success: true,
             name: file.name,
             size: file.size,
-            path: result.filePath || result.path || `//${SMB_CONFIG.server}/${SMB_CONFIG.share}${SMB_CONFIG.path}/${reportId}/${file.name}`,
+            path: result.filePath || result.path || `/mnt/EXTERNAL-4TB/Data/speakup/${reportId}/${file.name}`,
             url: result.url || null,
             rawResponse: result
         };
@@ -201,12 +162,12 @@ async function uploadAllFiles(files, reportId) {
             uploadProgressBar.style.width = `${percent}%`;
         }
         
-        showToast(`📤 ${TESTING_MODE ? '[TEST] ' : ''}Upload ${files[i].name}...`, false);
-        const result = await uploadFileToN8N(files[i].file, reportId);
+        showToast(`📤 Upload ${files[i].name}...`, false);
+        const result = await uploadFileToAPI(files[i].file, reportId);
         results.push(result);
         
         if (result.success) {
-            showToast(`✅ ${result.name} ${TESTING_MODE ? '(simulasi)' : 'berhasil'}`, false);
+            showToast(`✅ ${result.name} berhasil diupload`, false);
         } else {
             showToast(`❌ Gagal: ${result.name} - ${result.error}`, true);
         }
@@ -304,7 +265,7 @@ async function sendEmail(reportData, uploadedFilesInfo) {
         const successFiles = uploadedFilesInfo.filter(f => f.success);
         if (successFiles.length) {
             lampiranText = successFiles.map(f => 
-                `• ${f.name} (${(f.size / 1024).toFixed(1)}KB)\n  Lokasi: ${f.path || 'Tersimpan'}`
+                `• ${f.name} (${(f.size / 1024).toFixed(1)}KB)\n  Lokasi: ${f.path || 'Tersimpan di TrueNAS'}`
             ).join("\n\n");
         } else {
             lampiranText = "Upload file gagal, silakan lampirkan manual";
@@ -325,7 +286,7 @@ async function sendEmail(reportData, uploadedFilesInfo) {
         status: reportData.detailTambahan.status,
         lampiran: lampiranText,
         tanggal_laporan: new Date().toLocaleString('id-ID'),
-        message: `LAPORAN SPEAKUP\n\nKategori: ${reportData.kategori}\nJudul: ${reportData.judul}\nKronologi: ${reportData.kronologi}\n\nFile yang tersimpan:\n${lampiranText}`
+        message: `LAPORAN SPEAKUP\n\nKategori: ${reportData.kategori}\nJudul: ${reportData.judul}\nKronologi: ${reportData.kronologi}\n\nFile yang tersimpan di TrueNAS:\n${lampiranText}`
     };
     
     return await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
@@ -369,9 +330,9 @@ async function submitReportHandler(e) {
         const reportId = Date.now().toString();
         let uploadResults = [];
         
-        // Upload file ke TrueNAS via n8n webhook
+        // Upload file ke TrueNAS via backend API
         if (uploadedFiles.length > 0) {
-            showToast(`📤 ${TESTING_MODE ? '[TESTING MODE] ' : ''}Mengupload ${uploadedFiles.length} file...`, false);
+            showToast(`📤 Mengupload ${uploadedFiles.length} file ke TrueNAS...`, false);
             uploadResults = await uploadAllFiles(uploadedFiles, reportId);
         }
         
@@ -402,10 +363,10 @@ async function submitReportHandler(e) {
         
         let successMessage = `✅ Laporan terkirim ke HR & tim internal\n`;
         if (successCount > 0) {
-            successMessage += `📁 ${successCount} file berhasil ${TESTING_MODE ? '(simulasi) ' : ''}disimpan\n`;
+            successMessage += `📁 ${successCount} file berhasil disimpan ke TrueNAS\n`;
         }
         if (failCount > 0) {
-            successMessage += `⚠️ ${failCount} file gagal diupload`;
+            successMessage += `⚠️ ${failCount} file gagal diupload, silakan lampirkan manual`;
         }
         
         alert(successMessage);
