@@ -2,7 +2,7 @@
 const EMAILJS_PUBLIC_KEY = "STBRxktGl6mM6Zi95";
 const EMAILJS_SERVICE_ID = "carbonio_mail";
 const EMAILJS_TEMPLATE_ID = "template_08n414a";
-const RECIPIENT_EMAIL = "hr@genetek.co.id";
+const RECIPIENT_EMAIL = "contoh@genetek.co.id";
 
 // Konfigurasi n8n upload webhook
 const N8N_UPLOAD_URL = "https://n8n.genetek.co.id/webhook/upload";
