@@ -5,7 +5,7 @@ const EMAILJS_TEMPLATE_ID = "template_08n414a";
 const RECIPIENT_EMAIL = "hr@genetek.co.id";
 
 // Konfigurasi Backend API upload
-const API_UPLOAD_URL = "http://192.168.104.37:3000/upload";
+const API_UPLOAD_URL = "http://192.168.104.38:3000/upload";
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
 
